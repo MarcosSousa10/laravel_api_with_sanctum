@@ -23,7 +23,8 @@ class AuthController extends Controller
             return ApiResponse::unauthorized();
         }
         $user = auth()->user();
-        $token = $user->createToken($user->name)->plainTextToken;
+       // $token = $user->createToken($user->name)->plainTextToken;
+       $token = $user->createToken($user->name,['*'],now()->addDay())->plainTextToken;
         return ApiResponse::success([
             'user'=> $user->name,
             'email' => $user->email,

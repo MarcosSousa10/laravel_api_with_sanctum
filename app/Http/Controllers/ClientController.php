@@ -14,6 +14,11 @@ class ClientController extends Controller
      */
     public function index()
     {
+        if (!auth()->user()->tokenCan('clients:list')) {
+            return ApiResponse::error('Access danied', 401);
+        }
+
+
         // return response()->json(Client::all(), 200);
 
         return ApiResponse::success(Client::all());
@@ -38,6 +43,10 @@ class ClientController extends Controller
      */
     public function show(string $id)
     {
+        if (!auth()->user()->tokenCan('clients:detail')) {
+            return ApiResponse::error('Access danied', 401);
+        }
+
         $cliente = Client::find($id);
         if ($cliente) {
             return ApiResponse::success($cliente);
