@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('phone');
+            $table->string('image')->nullable(); // Adicionando o campo para a imagem
             $table->timestamps();
         });
     }
