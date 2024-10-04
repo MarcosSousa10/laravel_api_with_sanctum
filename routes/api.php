@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/status', function () {
     return ApiResponse::success('API is running');
-});
-Route::apiResource('cliente',ClientController::class);
-Route::post('/login',[AuthController::class,'login']);
+})->middleware('auth:sanctum');
+Route::apiResource('cliente', ClientController::class)->middleware('auth:sanctum');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
