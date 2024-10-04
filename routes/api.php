@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -14,3 +15,4 @@ Route::get('/status', function () {
     );
 });
 Route::apiResource('cliente',ClientController::class);
+Route::post('/login',[AuthController::class,'login']);
