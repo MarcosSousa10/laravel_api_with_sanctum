@@ -24,6 +24,7 @@ class AuthController extends Controller
         }
         $user = auth()->user();
        // $token = $user->createToken($user->name)->plainTextToken;
+      // $token = $user->createToken($user->name,['clients:list','clients:detail'],now()->addDay())->plainTextToken;
        $token = $user->createToken($user->name,['*'],now()->addDay())->plainTextToken;
         return ApiResponse::success([
             'user'=> $user->name,

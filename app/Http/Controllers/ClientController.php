@@ -14,9 +14,10 @@ class ClientController extends Controller
      */
     public function index()
     {
-        if (!auth()->user()->tokenCan('clients:list')) {
-            return ApiResponse::error('Access danied', 401);
-        }
+        //Bloqueio  na Classe Não precisa colocar na rota so se quiser ai não precisa colocar aqui
+     //   if (!auth()->user()->tokenCan('clients:list')) {
+     //       return ApiResponse::error('Access danied', 401);
+     //   }
 
 
         // return response()->json(Client::all(), 200);
