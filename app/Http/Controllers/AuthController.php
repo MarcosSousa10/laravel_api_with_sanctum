@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Services\ApiResponse;
@@ -23,18 +22,18 @@ class AuthController extends Controller
             return ApiResponse::unauthorized();
         }
         $user = auth()->user();
-       // $token = $user->createToken($user->name)->plainTextToken;
-      // $token = $user->createToken($user->name,['clients:list','clients:detail'],now()->addDay())->plainTextToken;
-       $token = $user->createToken($user->name,['*'],now()->addDay())->plainTextToken;
+        // $token = $user->createToken($user->name)->plainTextToken;
+        // $token = $user->createToken($user->name,['clients:list','clients:detail'],now()->addDay())->plainTextToken;
+        $token = $user->createToken($user->name, ['*'], now()->addDay())->plainTextToken;
         return ApiResponse::success([
-            'user'=> $user->name,
+            'user' => $user->name,
             'email' => $user->email,
             'token' => $token
         ]);
     }
-    public function logout(Request $request){
-        $request -> user()->tokens()->delete();
+    public function logout(Request $request)
+    {
+        $request->user()->tokens()->delete();
         return ApiResponse::success('Logout with success');
     }
-
 }
