@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use PHPJasper\PHPJasper;
@@ -28,19 +29,19 @@ class ReportController extends Controller
             'format' => ['pdf'],
             'params' => $params,
             'db_connection' => [
-                'driver' => 'mysql', // ou 'mariadb'
-                'host' => env('DB_HOST'), // Certifique-se de que está correto
-                'port' => env('DB_PORT'), // Certifique-se de que está correto
-                'database' => env('DB_DATABASE'), // Certifique-se de que está correto
-                'username' => env('DB_USERNAME'), // Certifique-se de que está correto
-                'password' => env('DB_PASSWORD'), // Certifique-se de que está correto
+                'driver' => 'mysql',
+                'host' => env('DB_HOST'),
+                'port' => env('DB_PORT'),
+                'database' => env('DB_DATABASE'),
+                'username' => env('DB_USERNAME'),
+                'password' => env('DB_PASSWORD'),
                 'jdbc_driver' => 'com.mysql.cj.jdbc.Driver',
                 'jdbc_url' => 'jdbc:mysql://' . env('DB_HOST') . ':' . env('DB_PORT') . '/' . env('DB_DATABASE') . '?useSSL=false', // useSSL=false
             ],
         ];
 
         try {
-            // Processando o relatório
+
             $jasper->process($input, $output, $options)->execute();
 
             $file = $output . '.pdf';
