@@ -41,27 +41,21 @@ Route::get('/status', function () {
     return ApiResponse::success('API is running');
 })->middleware('auth:sanctum');
 //Route::apiResource('cliente', ClientController::class)->middleware('auth:sanctum');
-Route::get('cliente', [ClientController::class, "index"])->middleware(['auth:sanctum']);
-Route::post('cliente', [ClientController::class, "store"])->middleware('auth:sanctum');
-Route::get('cliente/{client}', [ClientController::class, "show"])->middleware(['auth:sanctum', 'ability:clients:detail']);
-Route::put('cliente/{client}', [ClientController::class, "update"])->middleware('auth:sanctum');
-Route::delete('cliente/{client}', [ClientController::class, "delete"])->middleware('auth:sanctum');
-
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-Route::post('register', [AuthController::class, 'createUser']);
-
-Route::post('/send-email', [EmailController::class, 'sendEmail']);
+Route::get('cliente', [ClientController::class, "index"])->middleware('auth:sanctum', LogAuditoria::class);
+Route::post('cliente', [ClientController::class, "store"])->middleware('auth:sanctum', LogAuditoria::class);
+Route::get('cliente/{client}', [ClientController::class, "show"])->middleware('auth:sanctum', LogAuditoria::class);
+Route::put('cliente/{client}', [ClientController::class, "update"])->middleware('auth:sanctum', LogAuditoria::class);
+Route::delete('cliente/{client}', [ClientController::class, "delete"])->middleware('auth:sanctum', LogAuditoria::class);
+Route::post('/login', [AuthController::class, 'login'])->middleware(LogAuditoria::class);
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum', LogAuditoria::class);
+Route::post('register', [AuthController::class, 'createUser'])->middleware(LogAuditoria::class);
+Route::post('/send-email', [EmailController::class, 'sendEmail'])->middleware(['auth:sanctum', 'ability:clients:detail']);
 Route::get('/new_user_confirmation/{token}', [AuthController::class, 'new_user_confirmation']);
-
-
-Route::post('/enviar-email', [EmailController::class, 'enviarEmail']);
-
+Route::post('/enviar-email', [EmailController::class, 'enviarEmail'])->middleware('auth:sanctum', LogAuditoria::class);
 Route::get('/clientes/email', [ClienteController::class, 'getByEmail'])->middleware('auth:sanctum', LogAuditoria::class);
-Route::get('/report', [ReportController::class, 'generateReport']);
+Route::get('/report', [ReportController::class, 'generateReport'])->middleware('auth:sanctum', LogAuditoria::class);
 Route::get('/agendamentos/por-email', [AgendamentoController::class, 'filtrarPorEmail'])->middleware('auth:sanctum', LogAuditoria::class);
 Route::get('/agendamentos/agendados', [AgendamentoController::class, 'filtrarAgendados'])->middleware('auth:sanctum', LogAuditoria::class);
-
 Route::apiResource('clientes', ClienteController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('filiais', FilialController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('profissionais', ProfissionalController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
