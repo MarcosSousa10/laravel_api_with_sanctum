@@ -32,7 +32,7 @@ class ServicoController extends Controller
             'descricao' => 'nullable',
             'duracao' => 'required|integer',
             'preco' => 'nullable|numeric',
-            'filial_id' => 'required|exists:filiais,id',
+            'filial_id' => 'required|exists:filiais,filial_id',
             'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 

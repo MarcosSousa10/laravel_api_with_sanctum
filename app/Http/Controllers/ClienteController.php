@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cliente; // Certifique-se de que o modelo Cliente esteja criado
+use App\Models\Cliente;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ClienteController extends Controller
 {
@@ -35,6 +36,34 @@ class ClienteController extends Controller
         $cliente = Cliente::find($id);
         return response()->json($cliente);
     }
+
+        public function getByEmail(Request $request)
+        {
+            // Validar o e-mail
+            $request->validate([
+                'email' => 'required|email',
+            ]);
+
+            // Capturar o e-mail da query string
+            $email = $request->query('email');
+
+            // Log para verificar o valor do e-mail
+            Log::info("Email recebido: " . "$email");
+
+            // Verificar se o cliente existe
+            $cliente = Cliente::where('email', "cliente@example.com")->first();
+
+            // Log para verificar o resultado da consulta
+            Log::info("Cliente encontrado: " . json_encode($cliente));
+
+            // Verificar se o cliente foi encontrado
+            if ($cliente) {
+                return response()->json($cliente);
+            } else {
+                return response()->json(['message' => 'Cliente não encontrado'], 404);
+            }
+        }
+
 
     // Método para atualizar um cliente
     public function update(Request $request, $id)

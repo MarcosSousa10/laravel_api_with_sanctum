@@ -48,7 +48,7 @@ Route::delete('cliente/{client}', [ClientController::class, "delete"])->middlewa
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-Route::post('register', [AuthController::class, 'createUser']); 
+Route::post('register', [AuthController::class, 'createUser']);
 
 Route::post('/send-email', [EmailController::class, 'sendEmail']);
 Route::get('/new_user_confirmation/{token}', [AuthController::class, 'new_user_confirmation']);
@@ -61,7 +61,7 @@ Route::get('/enviar-email', function () {
 
     return 'E-mail enviado com sucesso!';
 });
-
+Route::get('/clientes/email', [ClienteController::class, 'getByEmail']);
 Route::get('/report', [ReportController::class, 'generateReport']);
 Route::apiResource('clientes', ClienteController::class);
 Route::apiResource('filiais', FilialController::class);

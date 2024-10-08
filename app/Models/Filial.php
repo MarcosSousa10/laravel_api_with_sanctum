@@ -9,6 +9,7 @@ class Filial extends Model
 {
     use HasFactory;
     protected $table = 'filiais';
+    protected $primaryKey = 'filial_id'; 
 
     protected $fillable = [
         'ct',
