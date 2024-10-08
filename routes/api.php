@@ -63,6 +63,9 @@ Route::get('/enviar-email', function () {
 });
 Route::get('/clientes/email', [ClienteController::class, 'getByEmail']);
 Route::get('/report', [ReportController::class, 'generateReport']);
+Route::get('/agendamentos/por-email', [AgendamentoController::class, 'filtrarPorEmail']);
+Route::get('/agendamentos/agendados', [AgendamentoController::class, 'filtrarAgendados']);
+
 Route::apiResource('clientes', ClienteController::class);
 Route::apiResource('filiais', FilialController::class);
 Route::apiResource('profissionais', ProfissionalController::class);

@@ -92,4 +92,33 @@ class AgendamentoController extends Controller
 
         return ApiResponse::error('Agendamento not found', 404);
     }
+    public function filtrarAgendados()
+    {
+        // Filtra os agendamentos com status 'AGENDADO'
+        $agendamentos = Agendamento::with(['cliente', 'filial', 'profissional', 'servico'])
+            ->where('status', 'AGENDADO')
+            ->get();
+
+        return ApiResponse::success($agendamentos);
+    }
+
+public function filtrarPorEmail(Request $request)
+{
+    // Valide o e-mail fornecido
+    $request->validate([
+        'email' => 'required|email',
+    ]);
+
+    $email = $request->input('email');
+
+    // Inicie a consulta com os relacionamentos necessários
+    $agendamentos = Agendamento::with(['cliente', 'filial', 'profissional', 'servico'])
+        ->whereHas('cliente', function ($query) use ($email) {
+            $query->where('email', $email);
+        })
+        ->get();
+
+    return ApiResponse::success($agendamentos);
+}
+
 }
