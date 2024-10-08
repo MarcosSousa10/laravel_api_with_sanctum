@@ -23,8 +23,7 @@ class CreateLogsDeAuditoriaTable extends Migration
 
             // Chaves primárias e estrangeiras
             $table->primary('id'); // Define a chave primária
-            // Se houver uma tabela de usuários, você pode descomentar a linha abaixo
-            // $table->foreign('usuario_id')->references('id')->on('usuarios')->onDelete('set null'); // Chave estrangeira para `usuarios`
+            $table->foreign('usuario_id')->references('id')->on('users')->onDelete('set null'); // Chave estrangeira para `users`
         });
     }
 

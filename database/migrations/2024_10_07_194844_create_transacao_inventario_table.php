@@ -14,15 +14,13 @@ class CreateTransacaoInventarioTable extends Migration
     public function up()
     {
         Schema::create('transacao_inventario', function (Blueprint $table) {
-            $table->bigInteger('inventario_id')->unsigned(); // ID do inventário (obrigatório)
-            $table->bigInteger('transacao_id')->unsigned(); // ID da transação (obrigatório)
+            $table->bigInteger('inventario_id')->unsigned();
+            $table->bigInteger('transacao_id')->unsigned();
 
-            // Chave primária composta
             $table->primary(['inventario_id', 'transacao_id']);
 
-            // Chaves estrangeiras
-            $table->foreign('inventario_id')->references('id')->on('inventario')->onDelete('cascade'); // Chave estrangeira para `inventario`
-            $table->foreign('transacao_id')->references('id')->on('transacoes')->onDelete('cascade'); // Chave estrangeira para `transacoes`
+            $table->foreign('inventario_id')->references('id')->on('inventario')->onDelete('cascade');
+            $table->foreign('transacao_id')->references('id')->on('transacoes')->onDelete('cascade');
         });
     }
 

@@ -14,17 +14,14 @@ class CreateVendaItemTable extends Migration
     public function up()
     {
         Schema::create('venda_item', function (Blueprint $table) {
-            $table->bigIncrements('id'); // ID do item de venda
-            $table->integer('quantidade'); // Quantidade do item (obrigatório)
-            $table->bigInteger('inventario_id')->unsigned(); // ID do inventário (obrigatório)
-            $table->bigInteger('venda_id')->unsigned()->nullable(); // ID da venda (opcional)
-
-            // Chave primária
+            $table->bigIncrements('id');
+            $table->integer('quantidade');
+            $table->bigInteger('inventario_id')->unsigned();
+            $table->bigInteger('venda_id')->unsigned()->nullable();
             $table->primary('id');
 
-            // Chaves estrangeiras
-            $table->foreign('inventario_id')->references('id')->on('inventario')->onDelete('cascade'); // Chave estrangeira para inventário
-            $table->foreign('venda_id')->references('id')->on('vendas')->onDelete('cascade'); // Chave estrangeira para vendas
+            $table->foreign('inventario_id')->references('id')->on('inventario')->onDelete('cascade');
+            $table->foreign('venda_id')->references('id')->on('vendas')->onDelete('cascade'); 
         });
     }
 

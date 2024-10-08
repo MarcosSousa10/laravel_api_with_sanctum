@@ -14,12 +14,12 @@ class CreateConfiguracoesDoSistemaTable extends Migration
     public function up()
     {
         Schema::create('configuracoes_do_sistema', function (Blueprint $table) {
-            $table->id(); // Chave primária auto-incrementável
-            $table->string('chave_configuracao', 100); // Chave da configuração
-            $table->text('descricao')->nullable(); // Descrição da configuração
-            $table->dateTime('ultima_atualizacao'); // Data da última atualização
-            $table->text('valor_configuracao'); // Valor da configuração
-            $table->unique('chave_configuracao'); // Restrição de unicidade para chave_configuracao
+            $table->id();
+            $table->string('chave_configuracao', 100);
+            $table->text('descricao')->nullable();
+            $table->dateTime('ultima_atualizacao');
+            $table->text('valor_configuracao');
+            $table->unique('chave_configuracao'); 
         });
     }
 

@@ -14,19 +14,18 @@ class CreateProgramaFidelidadeTable extends Migration
     public function up()
     {
         Schema::create('programa_fidelidade', function (Blueprint $table) {
-            $table->id(); // Chave primária auto-incrementável
-            $table->dateTime('created_at')->nullable(); // Data de criação (opcional)
-            $table->text('descricao')->nullable(); // Descrição do programa (opcional)
-            $table->date('disponibilidade_inicio'); // Data de início da disponibilidade (obrigatório)
-            $table->date('disponibilidade_fim'); // Data de fim da disponibilidade (obrigatório)
-            $table->string('nome_recompensa', 100); // Nome da recompensa (obrigatório)
-            $table->integer('pontos_necessarios'); // Pontos necessários para a recompensa (obrigatório)
-            $table->dateTime('updated_at')->nullable(); // Data da última atualização (opcional)
-            $table->bigInteger('filial_id')->unsigned(); // ID da filial (obrigatório)
+            $table->id();
+            $table->dateTime('created_at')->nullable();
+            $table->text('descricao')->nullable();
+            $table->date('disponibilidade_inicio');
+            $table->date('disponibilidade_fim');
+            $table->string('nome_recompensa', 100);
+            $table->integer('pontos_necessarios');
+            $table->dateTime('updated_at')->nullable();
+            $table->bigInteger('filial_id')->unsigned();
 
-            // Chaves primárias e estrangeiras
-            $table->primary('id'); // Define a chave primária
-            $table->foreign('filial_id')->references('filial_id')->on('filiais'); // Chave estrangeira para `filiais`
+            $table->primary('id');
+            $table->foreign('filial_id')->references('filial_id')->on('filiais');
         });
     }
 

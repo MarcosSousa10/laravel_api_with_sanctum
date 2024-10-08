@@ -14,13 +14,13 @@ class CreateComissoesTable extends Migration
     public function up()
     {
         Schema::create('comissoes', function (Blueprint $table) {
-            $table->id(); // Chave primária auto-incrementável
-            $table->foreignId('agendamento_id')->constrained('agendamentos')->onDelete('cascade'); // Referência ao agendamento
-            $table->timestamp('created_at')->useCurrent(); // Data de criação
-            $table->foreignId('profissional_id')->constrained('profissionais')->onDelete('cascade'); // Referência ao profissional
-            $table->decimal('taxa_comissao', 5, 2); // Taxa de comissão
-            $table->timestamp('updated_at')->nullable(); // Data de atualização (opcional)
-            $table->decimal('valor_comissao', 10, 2); // Valor da comissão
+            $table->id();
+            $table->foreignId('agendamento_id')->constrained('agendamentos')->onDelete('cascade');
+            $table->timestamp('created_at')->useCurrent();
+            $table->foreignId('profissional_id')->constrained('profissionais')->onDelete('cascade');
+            $table->decimal('taxa_comissao', 5, 2);
+            $table->timestamp('updated_at')->nullable();
+            $table->decimal('valor_comissao', 10, 2); 
         });
     }
 

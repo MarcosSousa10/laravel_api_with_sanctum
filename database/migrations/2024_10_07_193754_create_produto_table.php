@@ -14,19 +14,17 @@ class CreateProdutoTable extends Migration
     public function up()
     {
         Schema::create('produto', function (Blueprint $table) {
-            $table->id('codprod'); // Chave primária auto-incrementável
-            $table->string('descricao', 255)->nullable(); // Descrição do produto (opcional)
-            $table->integer('estoquecd')->nullable(); // Estoque CD (opcional)
-            $table->integer('estoquedispothon')->nullable(); // Estoque disponível Thon (opcional)
-            $table->integer('estoqueothon')->nullable(); // Estoque Thon (opcional)
-            $table->integer('giromes')->nullable(); // Giro mês (opcional)
-            $table->string('produtopai', 255)->nullable(); // Produto pai (opcional)
-            $table->integer('qtachegar')->nullable(); // Quantidade a chegar (opcional)
-            $table->integer('qtvendida3meses')->nullable(); // Quantidade vendida nos últimos 3 meses (opcional)
-            $table->string('unidade', 255)->nullable(); // Unidade de medida (opcional)
-
-            // Chave primária
-            $table->primary('codprod'); // Define a chave primária
+            $table->id('codprod');
+            $table->string('descricao', 255)->nullable();
+            $table->integer('estoquecd')->nullable();
+            $table->integer('estoquedispothon')->nullable();
+            $table->integer('estoqueothon')->nullable();
+            $table->integer('giromes')->nullable();
+            $table->string('produtopai', 255)->nullable();
+            $table->integer('qtachegar')->nullable();
+            $table->integer('qtvendida3meses')->nullable();
+            $table->string('unidade', 255)->nullable();
+            $table->primary('codprod');
         });
     }
 

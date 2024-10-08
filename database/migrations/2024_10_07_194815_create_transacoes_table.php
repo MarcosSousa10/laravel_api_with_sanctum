@@ -14,21 +14,19 @@ class CreateTransacoesTable extends Migration
     public function up()
     {
         Schema::create('transacoes', function (Blueprint $table) {
-            $table->bigIncrements('id'); // ID da transação
-            $table->dateTime('created_at')->nullable(); // Data de criação
-            $table->dateTime('data_transacao'); // Data da transação
-            $table->string('metodo_pagamento'); // Método de pagamento
-            $table->dateTime('updated_at')->nullable(); // Data de atualização
-            $table->decimal('valor_pago', 10, 2); // Valor pago
-            $table->bigInteger('agendamento_id')->nullable()->unsigned(); // ID do agendamento (opcional)
-            $table->bigInteger('filial_id')->unsigned(); // ID da filial
+            $table->bigIncrements('id');
+            $table->dateTime('created_at')->nullable();
+            $table->dateTime('data_transacao');
+            $table->string('metodo_pagamento');
+            $table->dateTime('updated_at')->nullable();
+            $table->decimal('valor_pago', 10, 2);
+            $table->bigInteger('agendamento_id')->nullable()->unsigned();
+            $table->bigInteger('filial_id')->unsigned();
 
-            // Chave primária
             $table->primary('id');
 
-            // Chaves estrangeiras
-            $table->foreign('agendamento_id')->references('id')->on('agendamentos')->onDelete('set null'); // Chave estrangeira para agendamentos
-            $table->foreign('filial_id')->references('filial_id')->on('filiais')->onDelete('cascade'); // Chave estrangeira para filiais
+            $table->foreign('agendamento_id')->references('id')->on('agendamentos')->onDelete('set null'); 
+            $table->foreign('filial_id')->references('filial_id')->on('filiais')->onDelete('cascade');
         });
     }
 

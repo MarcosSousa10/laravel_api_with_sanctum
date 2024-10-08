@@ -14,19 +14,18 @@ class CreatePromocoesAtivasTable extends Migration
     public function up()
     {
         Schema::create('promocoes_ativas', function (Blueprint $table) {
-            $table->id(); // Chave primária auto-incrementável
-            $table->dateTime('created_at')->nullable(); // Data de criação (opcional)
-            $table->date('data_inicio'); // Data de início da promoção (obrigatório)
-            $table->date('data_fim'); // Data de fim da promoção (obrigatório)
-            $table->decimal('desconto', 38, 2); // Valor do desconto (obrigatório)
-            $table->string('nome', 100); // Nome da promoção (obrigatório)
-            $table->string('descricao', 255)->nullable(); // Descrição da promoção (opcional)
-            $table->dateTime('updated_at')->nullable(); // Data da última atualização (opcional)
-            $table->bigInteger('filial_id')->unsigned(); // ID da filial (obrigatório)
+            $table->id();
+            $table->dateTime('created_at')->nullable();
+            $table->date('data_inicio');
+            $table->date('data_fim');
+            $table->decimal('desconto', 38, 2);
+            $table->string('nome', 100);
+            $table->string('descricao', 255)->nullable();
+            $table->dateTime('updated_at')->nullable();
+            $table->bigInteger('filial_id')->unsigned();
 
-            // Chaves primárias e estrangeiras
-            $table->primary('id'); // Define a chave primária
-            $table->foreign('filial_id')->references('filial_id')->on('filiais'); // Chave estrangeira para `filiais`
+            $table->primary('id');
+            $table->foreign('filial_id')->references('filial_id')->on('filiais');
         });
     }
 

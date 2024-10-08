@@ -14,15 +14,14 @@ class CreateTemplatesDeNotificacoesTable extends Migration
     public function up()
     {
         Schema::create('templates_de_notificacoes', function (Blueprint $table) {
-            $table->id(); // Chave primária auto-incrementável
-            $table->text('conteudo_template')->nullable(); // Conteúdo do template (opcional)
-            $table->dateTime('created_at')->nullable(); // Data de criação (opcional)
-            $table->string('nome_template', 100); // Nome do template (obrigatório)
-            $table->string('tipo_template', 255); // Tipo do template (obrigatório)
-            $table->dateTime('updated_at')->nullable(); // Data da última atualização (opcional)
+            $table->id();
+            $table->text('conteudo_template')->nullable(); 
+            $table->dateTime('created_at')->nullable();
+            $table->string('nome_template', 100);
+            $table->string('tipo_template', 255);
+            $table->dateTime('updated_at')->nullable();
 
-            // Chave primária
-            $table->primary('id'); // Define a chave primária
+            $table->primary('id');
         });
     }
 
