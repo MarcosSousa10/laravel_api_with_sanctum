@@ -42,6 +42,7 @@ use App\Http\Middleware\LogAuditoria;
 Route::get('/status', function () {
     return ApiResponse::success('API is running');
 })->middleware('auth:sanctum');
+
 //Route::apiResource('cliente', ClientController::class)->middleware('auth:sanctum');
 Route::get('/verify-email/{token}', [AuthController::class, 'verifyEmail']);
 Route::get('cliente', [ClientController::class, "index"])->middleware('auth:sanctum', LogAuditoria::class);
@@ -61,12 +62,10 @@ Route::get('/agendamentos/por-email', [AgendamentoController::class, 'filtrarPor
 Route::get('/agendamentos/agendados', [AgendamentoController::class, 'filtrarAgendados'])->middleware('auth:sanctum', LogAuditoria::class);
 Route::apiResource('clientes', ClienteController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('filiais', FilialController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
-
 //CheckIfClient::class
 Route::middleware(['auth:sanctum', 'can:profissional'])->group(function () {
     Route::apiResource('profissionais', ProfissionalController::class);
 });
-
 Route::apiResource('servicos', ServicoController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 //Route::apiResource('agendamentos', AgendamentoController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::middleware(['auth:sanctum', LogAuditoria::class])->group(function () {
