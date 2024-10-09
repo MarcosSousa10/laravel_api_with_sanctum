@@ -24,19 +24,16 @@ class AuthController extends Controller
 
         $credentials = $request->only('email', 'password');
 
-        // Tenta autenticar o usuário
         if (!Auth::attempt($credentials)) {
             return ApiResponse::unauthorized('Credenciais inválidas.');
         }
 
         $user = Auth::user();
 
-        // Verifica se o e-mail foi verificado
         if (!$user->email_verified) {
             return ApiResponse::error('Por favor, verifique seu e-mail antes de fazer login.');
         }
 
-        // Cria o token de autenticação
         $token = $user->createToken($user->name, ['*'], now()->addDay())->plainTextToken;
 
         return ApiResponse::success([
@@ -56,25 +53,21 @@ class AuthController extends Controller
 
     public function createUser(Request $request)
     {
-        // Valida os dados da requisição
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        // Gera um token de verificação
         $verificationToken = Str::random(64);
 
-        // Cria um novo usuário sem ativá-lo
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'email_verification_token' => $verificationToken, // Salva o token
+            'email_verification_token' => $verificationToken,
         ]);
 
-        // Envia o e-mail de verificação
         Mail::to($user->email)->send(new VerificationEmail($user));
 
         return ApiResponse::success('Usuário registrado com sucesso. Por favor, verifique seu e-mail.');
@@ -82,23 +75,20 @@ class AuthController extends Controller
 
     public function verifyEmail($token)
     {
-        Log::info('Verifying token: ' . $token); // Para depuração
+        Log::info('Verifying token: ' . $token);
         $user = User::where('email_verification_token', $token)->first();
 
-        // Verifica se o usuário foi encontrado
         if (!$user) {
             return ApiResponse::error('Token inválido.');
         }
 
-        // Verifica se o e-mail já foi verificado
         if ($user->email_verified) {
             return ApiResponse::error('Este e-mail já foi verificado.');
         }
 
-        // Atualiza os campos de verificação do e-mail
         $user->email_verified = true;
-        $user->email_verified_at = now(); // Registra a data e hora da verificação
-        $user->email_verification_token = null; // Remove o token após verificação
+        $user->email_verified_at = now();
+        $user->email_verification_token = null;
         $user->save();
 
         Log::info('User verified: ' . $user->email);
