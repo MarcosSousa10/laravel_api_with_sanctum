@@ -50,20 +50,57 @@ class RolePermissionController extends Controller
 
         return response()->json(['message' => 'User already has this role.'], 400);
     }
-
-    // Remove um papel do usuário
-    public function removeRole(Request $request, $userId)
+    public function getUserPermissions($userId)
     {
         $user = User::findOrFail($userId);
-        $role = Role::findByName($request->input('role'));
+
+        // Obtém os papéis do usuário
+        $roles = $user->getRoleNames();
+
+        // Obtém as permissões do usuário
+        $permissions = $user->getAllPermissions()->pluck('name');
+
+        return response()->json([
+            'user_id' => $user->id,
+            'roles' => $roles,
+            'permissions' => $permissions,
+        ]);
+    }
+
+    public function removeRole(Request $request, $userId)
+    {
+        // Encontra o usuário pelo ID
+        $user = User::findOrFail($userId);
+        $roleName = $request->input('role');
+        $permissionName = $request->input('permission'); // Recebe a permissão a ser removida
+
+        $role = Role::findByName($roleName);
 
         if ($user->hasRole($role)) {
             $user->removeRole($role);
-            return response()->json(['message' => 'Role removed successfully.']);
+
+            foreach ($role->permissions as $permission) {
+                if ($user->hasPermissionTo($permission)) {
+                    $user->revokePermissionTo($permission);
+                }
+            }
+
+            if ($permissionName) {
+                $permission = Permission::findByName($permissionName);
+                if ($user->hasPermissionTo($permission)) {
+                    $user->revokePermissionTo($permission);
+                }
+            }
+
+            return response()->json(['message' => 'Role and permissions removed successfully.']);
         }
 
         return response()->json(['message' => 'User does not have this role.'], 400);
     }
+
+
+
+
 
     public function assignPermission(Request $request, $userId)
     {

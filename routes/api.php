@@ -53,32 +53,40 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::post('register', [AuthController::class, 'createUser'])->middleware(LogAuditoria::class);
 Route::post('/send-email', [EmailController::class, 'sendEmail'])->middleware(['auth:sanctum', 'ability:clients:detail']);
 Route::get('/new_user_confirmation/{token}', [AuthController::class, 'new_user_confirmation']);
-Route::post('/enviar-email', [EmailController::class, 'enviarEmail'])->middleware('auth:sanctum',CheckIfProfessional::class, LogAuditoria::class);
+Route::post('/enviar-email', [EmailController::class, 'enviarEmail'])->middleware('auth:sanctum', CheckIfProfessional::class, LogAuditoria::class);
 Route::get('/clientes/email', [ClienteController::class, 'getByEmail'])->middleware('auth:sanctum', LogAuditoria::class);
 Route::get('/report', [ReportController::class, 'generateReport']);
 Route::get('/agendamentos/por-email', [AgendamentoController::class, 'filtrarPorEmail'])->middleware('auth:sanctum', LogAuditoria::class);
 Route::get('/agendamentos/agendados', [AgendamentoController::class, 'filtrarAgendados'])->middleware('auth:sanctum', LogAuditoria::class);
 Route::apiResource('clientes', ClienteController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('filiais', FilialController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
+
 //CheckIfClient::class
 Route::middleware(['auth:sanctum', 'can:profissional'])->group(function () {
     Route::apiResource('profissionais', ProfissionalController::class);
 });
 
 Route::apiResource('servicos', ServicoController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
-Route::apiResource('agendamentos', AgendamentoController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
+//Route::apiResource('agendamentos', AgendamentoController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
+Route::middleware(['auth:sanctum', LogAuditoria::class])->group(function () {
+    Route::get('agendamentos', [AgendamentoController::class, 'index'])->name('agendamentos.index')->middleware('can:profissional');
+    Route::post('agendamentos', [AgendamentoController::class, 'store'])->name('agendamentos.store');
+    Route::get('agendamentos/{id}', [AgendamentoController::class, 'show'])->name('agendamentos.show');
+    Route::put('agendamentos/{id}', [AgendamentoController::class, 'update'])->name('agendamentos.update');
+    Route::delete('agendamentos/{id}', [AgendamentoController::class, 'destroy'])->name('agendamentos.destroy');
+});
 Route::apiResource('agendas-de-contatos', AgendaDeContatoController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('avaliacoes-de-servicos', AvaliacaoDeServicoController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('campanhas-de-marketing', CampanhaDeMarketingController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('cartoes-presente', CartaoPresenteController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
-Route::apiResource('comissoes', ComissaoController::class)->middleware(['auth:sanctum',CheckIfProfessional::class, LogAuditoria::class]);
+Route::apiResource('comissoes', ComissaoController::class)->middleware(['auth:sanctum', CheckIfProfessional::class, LogAuditoria::class]);
 Route::apiResource('comunicacao-clientes', ComunicacaoClienteController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('configuracoes-do-sistema', ConfiguracaoDoSistemaController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
-Route::apiResource('contas-a-pagar', ContaAPagarController::class)->middleware(['auth:sanctum',CheckIfProfessional::class, LogAuditoria::class]);
+Route::apiResource('contas-a-pagar', ContaAPagarController::class)->middleware(['auth:sanctum', CheckIfProfessional::class, LogAuditoria::class]);
 Route::apiResource('desempenho-dos-funcionarios', DesempenhoDosFuncionariosController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
-Route::apiResource('fornecedores', FornecedorController::class)->middleware(['auth:sanctum',CheckIfProfessional::class, LogAuditoria::class]);
+Route::apiResource('fornecedores', FornecedorController::class)->middleware(['auth:sanctum', CheckIfProfessional::class, LogAuditoria::class]);
 Route::apiResource('inventario', InventarioController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
-Route::apiResource('logs-de-auditoria', LogDeAuditoriaController::class)->middleware(['auth:sanctum',CheckIfProfessional::class, LogAuditoria::class]);
+Route::apiResource('logs-de-auditoria', LogDeAuditoriaController::class)->middleware(['auth:sanctum', CheckIfProfessional::class, LogAuditoria::class]);
 Route::apiResource('preferencias-dos-clientes', PreferenciasDosClientesController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('produtos', ProdutoController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('programas-fidelidade', ProgramaFidelidadeController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
@@ -92,3 +100,7 @@ Route::post('/users/{id}/assign-role', [RolePermissionController::class, 'assign
 Route::post('/users/{id}/remove-role', [RolePermissionController::class, 'removeRole']);
 Route::post('/users/{id}/assign-permission', [RolePermissionController::class, 'assignPermission']);
 Route::post('/users/{id}/remove-permission', [RolePermissionController::class, 'removePermission']);
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('users/{userId}/permissions', [RolePermissionController::class, 'getUserPermissions'])
+        ->name('users.permissions');
+});
