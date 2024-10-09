@@ -30,6 +30,7 @@ use App\Http\Controllers\PreferenciasDosClientesController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\ProgramaFidelidadeController;
 use App\Http\Controllers\PromocoesAtivasController;
+use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\TemplatesDeNotificacoesController;
 use App\Http\Controllers\TransacoesController;
 use App\Http\Controllers\TransacaoInventarioController;
@@ -52,16 +53,17 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::post('register', [AuthController::class, 'createUser'])->middleware(LogAuditoria::class);
 Route::post('/send-email', [EmailController::class, 'sendEmail'])->middleware(['auth:sanctum', 'ability:clients:detail']);
 Route::get('/new_user_confirmation/{token}', [AuthController::class, 'new_user_confirmation']);
-Route::post('/enviar-email', [EmailController::class, 'enviarEmail'])->middleware('auth:sanctum', LogAuditoria::class);
+Route::post('/enviar-email', [EmailController::class, 'enviarEmail'])->middleware('auth:sanctum',CheckIfProfessional::class, LogAuditoria::class);
 Route::get('/clientes/email', [ClienteController::class, 'getByEmail'])->middleware('auth:sanctum', LogAuditoria::class);
-Route::get('/report', [ReportController::class, 'generateReport'])->middleware('auth:sanctum', LogAuditoria::class);
+Route::get('/report', [ReportController::class, 'generateReport']);
 Route::get('/agendamentos/por-email', [AgendamentoController::class, 'filtrarPorEmail'])->middleware('auth:sanctum', LogAuditoria::class);
 Route::get('/agendamentos/agendados', [AgendamentoController::class, 'filtrarAgendados'])->middleware('auth:sanctum', LogAuditoria::class);
 Route::apiResource('clientes', ClienteController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('filiais', FilialController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 //CheckIfClient::class
-Route::apiResource('profissionais', ProfissionalController::class)
-    ->middleware(['auth:sanctum', LogAuditoria::class]);
+Route::middleware(['auth:sanctum', 'can:profissional'])->group(function () {
+    Route::apiResource('profissionais', ProfissionalController::class);
+});
 
 Route::apiResource('servicos', ServicoController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('agendamentos', AgendamentoController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
@@ -86,4 +88,7 @@ Route::apiResource('transacoes', TransacoesController::class)->middleware(['auth
 Route::apiResource('transacao-inventario', TransacaoInventarioController::class)->only(['index', 'store', 'show', 'destroy'])->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('vendas', VendasController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('venda_item', VendaItemController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
-
+Route::post('/users/{id}/assign-role', [RolePermissionController::class, 'assignRole']);
+Route::post('/users/{id}/remove-role', [RolePermissionController::class, 'removeRole']);
+Route::post('/users/{id}/assign-permission', [RolePermissionController::class, 'assignPermission']);
+Route::post('/users/{id}/remove-permission', [RolePermissionController::class, 'removePermission']);
