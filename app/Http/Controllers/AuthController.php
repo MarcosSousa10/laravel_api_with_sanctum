@@ -95,15 +95,17 @@ class AuthController extends Controller
             return ApiResponse::error('Este e-mail já foi verificado.');
         }
 
-        // Atualiza o status de verificação do e-mail
+        // Atualiza os campos de verificação do e-mail
         $user->email_verified = true;
+        $user->email_verified_at = now(); // Registra a data e hora da verificação
         $user->email_verification_token = null; // Remove o token após verificação
         $user->save();
 
-        Log::info('User verified: ' . $user->email); // Para confirmar que o usuário foi verificado
+        Log::info('User verified: ' . $user->email);
 
         return ApiResponse::success('E-mail verificado com sucesso. Agora você pode fazer login.');
     }
+
 
 
 }
