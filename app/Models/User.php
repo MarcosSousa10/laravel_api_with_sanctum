@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -10,10 +9,6 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
-
-
-
-
 {
     use HasFactory, Notifiable, HasApiTokens, HasRoles;
 
@@ -26,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'email_verification_token', // Adicione este campo para permitir a atribuição em massa
+        'email_verified', // Se você estiver usando este campo, adicione aqui também
     ];
 
     /**
@@ -48,6 +45,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'email_verified' => 'boolean', // Adicione a verificação do e-mail como booleano
+            'email_verification_token' => 'string', // Adicione o token como string
         ];
     }
 }
