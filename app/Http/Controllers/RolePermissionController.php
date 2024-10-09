@@ -69,10 +69,9 @@ class RolePermissionController extends Controller
 
     public function removeRole(Request $request, $userId)
     {
-        // Encontra o usuário pelo ID
         $user = User::findOrFail($userId);
         $roleName = $request->input('role');
-        $permissionName = $request->input('permission'); // Recebe a permissão a ser removida
+        $permissionName = $request->input('permission');
 
         $role = Role::findByName($roleName);
 
