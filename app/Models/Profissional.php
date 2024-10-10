@@ -29,4 +29,9 @@ class Profissional extends Model
     {
         return $this->belongsTo(Filial::class, 'filial_id');
     }
+
+    public function vendas()
+    {
+        return $this->hasMany(Venda::class);
+    }
 }

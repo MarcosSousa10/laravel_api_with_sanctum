@@ -14,19 +14,19 @@ class CreateVendasTable extends Migration
     public function up()
     {
         Schema::create('vendas', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->dateTime('data_venda');
-            $table->string('metodo_pagamento');
-            $table->decimal('valor_total', 38, 2);
+            $table->id();
+            $table->bigInteger('produto_id')->unsigned();
             $table->bigInteger('cliente_id')->unsigned();
-            $table->bigInteger('filial_id')->unsigned();
             $table->bigInteger('profissional_id')->unsigned();
+            $table->integer('quantidade');
+            $table->decimal('preco_total', 10, 2);
+            $table->dateTime('data_venda');
+            $table->timestamps();
 
-            $table->primary('id');
-
-            $table->foreign('cliente_id')->references('id')->on('clientes')->onDelete('cascade');
-            $table->foreign('filial_id')->references('filial_id')->on('filiais')->onDelete('cascade');
-            $table->foreign('profissional_id')->references('id')->on('profissionais')->onDelete('cascade'); 
+            // Relacionamentos
+            $table->foreign('produto_id')->references('id')->on('inventario');
+            $table->foreign('cliente_id')->references('id')->on('clientes');
+            $table->foreign('profissional_id')->references('id')->on('profissionais');
         });
     }
 
@@ -40,3 +40,4 @@ class CreateVendasTable extends Migration
         Schema::dropIfExists('vendas');
     }
 }
+

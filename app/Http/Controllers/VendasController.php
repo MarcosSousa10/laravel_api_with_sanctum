@@ -3,81 +3,89 @@
 namespace App\Http\Controllers;
 
 use App\Models\Venda;
+use App\Models\Inventario;
 use Illuminate\Http\Request;
+use App\Services\ApiResponse;
 
 class VendasController extends Controller
 {
-    public function index()
-    {
-        // Recupera todas as vendas
-        $vendas = Venda::with(['cliente', 'filial', 'profissional'])->get();
-
-        return response()->json($vendas);
-    }
-
+    /**
+     * Registra uma nova venda no sistema.
+     */
     public function store(Request $request)
     {
         $request->validate([
-            'data_venda' => 'required|date',
-            'metodo_pagamento' => 'required|string|max:255',
-            'valor_total' => 'required|numeric',
+            'produto_id' => 'required|exists:inventario,id',
             'cliente_id' => 'required|exists:clientes,id',
-            'filial_id' => 'required|exists:filiais,filial_id',
             'profissional_id' => 'required|exists:profissionais,id',
+            'quantidade' => 'required|integer|min:1',
         ]);
 
-        // Cria uma nova venda
-        $venda = Venda::create($request->all());
+        $produto = Inventario::find($request->produto_id);
 
-        return response()->json(['message' => 'Venda criada com sucesso', 'venda' => $venda], 201);
-    }
-
-    public function show($id)
-    {
-        // Recupera uma venda específica
-        $venda = Venda::with(['cliente', 'filial', 'profissional'])->find($id);
-
-        if (!$venda) {
-            return response()->json(['message' => 'Venda não encontrada'], 404);
+        // Verifica se tem estoque suficiente
+        if ($produto->quantidade < $request->quantidade) {
+            return ApiResponse::error('Estoque insuficiente', 400);
         }
 
-        return response()->json($venda);
+        // Atualiza o estoque do produto
+        $produto->quantidade -= $request->quantidade;
+        $produto->save();
+
+        // Calcula o preço total
+        $precoTotal = $produto->preco * $request->quantidade;
+
+        // Cria a venda
+        $venda = Venda::create([
+            'produto_id' => $request->produto_id,
+            'cliente_id' => $request->cliente_id,
+            'profissional_id' => $request->profissional_id,
+            'quantidade' => $request->quantidade,
+            'preco_total' => $precoTotal,
+            'data_venda' => now(),
+        ]);
+
+        return ApiResponse::success($venda);
     }
 
+    /**
+     * Exibe todas as vendas.
+     */
+    public function index()
+    {
+        $vendas = Venda::with(['produto', 'cliente', 'profissional'])->get();
+        return ApiResponse::success($vendas);
+    }
+
+    /**
+     * Exibe uma venda específica.
+     */
+    public function show($id)
+    {
+        $venda = Venda::with(['produto', 'cliente', 'profissional'])->find($id);
+
+        if ($venda) {
+            return ApiResponse::success($venda);
+        }
+
+        return ApiResponse::error('Venda não encontrada', 404);
+    }
     public function update(Request $request, $id)
     {
         $request->validate([
-            'data_venda' => 'date',
-            'metodo_pagamento' => 'string|max:255',
-            'valor_total' => 'numeric',
-            'cliente_id' => 'exists:clientes,id',
-            'filial_id' => 'exists:filiais,filial_id',
-            'profissional_id' => 'exists:profissionais,id',
+            'produto_id' => 'required|exists:produtos,id',
+            'cliente_id' => 'required|exists:clientes,id',
+            'profissional_id' => 'required|exists:profissionais,id',
+            'quantidade' => 'required|integer|min:1',
         ]);
 
-        // Atualiza a venda
         $venda = Venda::find($id);
 
-        if (!$venda) {
-            return response()->json(['message' => 'Venda não encontrada'], 404);
+        if ($venda) {
+            $venda->update($request->all());
+            return ApiResponse::success($venda);
         }
 
-        $venda->update($request->all());
-
-        return response()->json(['message' => 'Venda atualizada com sucesso', 'venda' => $venda]);
-    }
-
-    public function destroy($id)
-    {
-        // Remove uma venda específica
-        $venda = Venda::find($id);
-
-        if (!$venda) {
-            return response()->json(['message' => 'Venda não encontrada'], 404);
-        }
-
-        $venda->delete();
-
-        return response()->json(['message' => 'Venda excluída com sucesso'], 204);
+        return ApiResponse::error('Venda não encontrada', 404);
     }
 }

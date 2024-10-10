@@ -94,6 +94,11 @@ Route::prefix('cartoes-presente')->group(function () {
     Route::post('/{id}/resgatar', [CartaoPresenteController::class, 'resgatar']); // Resgatar cartão
     Route::get('/saldo/{codigo}', [CartaoPresenteController::class, 'verificarSaldo']); // Verificar saldo
 });
+Route::get('vendas', [VendasController::class, 'index']); // Listar todas as vendas
+Route::post('vendas', [VendasController::class, 'store']); // Criar uma nova venda
+Route::get('vendas/{id}', [VendasController::class, 'show']); // Exibir uma venda específica
+Route::put('vendas/{id}', [VendasController::class, 'update']); // Atualizar uma venda específica
+
 Route::apiResource('servicos', ServicoController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 //Route::apiResource('agendamentos', AgendamentoController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::middleware(['auth:sanctum', LogAuditoria::class])->group(function () {
@@ -122,7 +127,7 @@ Route::apiResource('promocoes-ativas', PromocoesAtivasController::class)->middle
 Route::apiResource('templates-de-notificacoes', TemplatesDeNotificacoesController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('transacoes', TransacoesController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('transacao-inventario', TransacaoInventarioController::class)->only(['index', 'store', 'show', 'destroy'])->middleware(['auth:sanctum', LogAuditoria::class]);
-Route::apiResource('vendas', VendasController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
+//Route::apiResource('vendas', VendasController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('venda_item', VendaItemController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::post('/users/{id}/assign-role', [RolePermissionController::class, 'assignRole']);
 Route::post('/users/{id}/remove-role', [RolePermissionController::class, 'removeRole']);
