@@ -32,6 +32,12 @@ class Inventario extends Model
         return $this->belongsTo(Filial::class, 'filial_id');
     }
 
+    public function vendas()
+    {
+        return $this->belongsToMany(Venda::class, 'venda_produto')
+            ->withPivot('quantidade', 'preco_total') // Permite acessar esses campos na tabela de pivô
+            ->withTimestamps();
+    }
     public function fornecedor()
     {
         return $this->belongsTo(Fornecedor::class, 'fornecedor_id');

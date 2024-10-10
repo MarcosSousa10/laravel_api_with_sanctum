@@ -14,38 +14,74 @@ class VendasController extends Controller
      */
     public function store(Request $request)
     {
+        // Valida os dados da requisição
         $request->validate([
-            'produto_id' => 'required|exists:inventario,id',
-            'cliente_id' => 'required|exists:clientes,id',
-            'profissional_id' => 'required|exists:profissionais,id',
-            'quantidade' => 'required|integer|min:1',
+            'cliente_id' => 'required|integer',
+            'profissional_id' => 'required|integer',
+            'inventarios' => 'required|array',
+            'inventarios.*.inventario_id' => 'required|integer|exists:inventario,id', // Verifica se o inventário existe
+            'inventarios.*.quantidade' => 'required|integer|min:1',
         ]);
 
-        $produto = Inventario::find($request->produto_id);
-
-        // Verifica se tem estoque suficiente
-        if ($produto->quantidade < $request->quantidade) {
-            return ApiResponse::error('Estoque insuficiente', 400);
-        }
-
-        // Atualiza o estoque do produto
-        $produto->quantidade -= $request->quantidade;
-        $produto->save();
-
-        // Calcula o preço total
-        $precoTotal = $produto->preco * $request->quantidade;
-
-        // Cria a venda
+        // Cria uma nova venda
         $venda = Venda::create([
-            'produto_id' => $request->produto_id,
             'cliente_id' => $request->cliente_id,
             'profissional_id' => $request->profissional_id,
-            'quantidade' => $request->quantidade,
-            'preco_total' => $precoTotal,
+            'preco_total' => 0, // Inicialmente zero, será calculado mais tarde
             'data_venda' => now(),
         ]);
 
-        return ApiResponse::success($venda);
+        $precoTotal = 0;
+
+        // Adiciona produtos à venda e atualiza o inventário
+        foreach ($request->inventarios as $produtoData) {
+            // Busca o inventário pelo ID fornecido na requisição
+            $inventario = Inventario::find($produtoData['inventario_id']);
+
+            // Verifica se o inventário foi encontrado
+            if (!$inventario) {
+                return response()->json(['error' => 'Inventário não encontrado'], 404);
+            }
+
+            // Verifica se a quantidade desejada está disponível
+            if ($inventario->quantidade < $produtoData['quantidade']) {
+                return response()->json(['error' => 'Quantidade solicitada não disponível'], 400);
+            }
+
+            // Atualiza o estoque do inventário
+            $inventario->quantidade -= $produtoData['quantidade'];
+            $inventario->save();
+
+            // Calcula o preço total
+            $precoTotal += $inventario->preco * $produtoData['quantidade'];
+
+            // Adiciona produtos à venda
+            $venda->produtos()->attach($inventario->id, [
+                'quantidade' => $produtoData['quantidade'],
+                'preco_total' => $inventario->preco * $produtoData['quantidade'],
+                // Você pode adicionar 'inventario_id' aqui se necessário
+            ]);
+        }
+
+        // Atualiza o preço total da venda após adicionar todos os produtos
+        $venda->preco_total = $precoTotal;
+        $venda->save();
+
+        // Retorna a venda após todos os produtos terem sido adicionados
+        return response()->json($venda, 201);
+    }
+
+
+
+    private function calcularPrecoTotal($produtos)
+    {
+        $total = 0;
+
+        foreach ($produtos as $produto) {
+            $total += $produto->preco * $produto->pivot->quantidade; // Aqui assumindo que 'preco' é um atributo do modelo Produto
+        }
+
+        return $total;
     }
 
     /**
@@ -53,7 +89,7 @@ class VendasController extends Controller
      */
     public function index()
     {
-        $vendas = Venda::with(['produto', 'cliente', 'profissional'])->get();
+        $vendas = Venda::with(['inventario', 'cliente', 'profissional'])->get();
         return ApiResponse::success($vendas);
     }
 
@@ -62,7 +98,7 @@ class VendasController extends Controller
      */
     public function show($id)
     {
-        $venda = Venda::with(['produto', 'cliente', 'profissional'])->find($id);
+        $venda = Venda::with(['inventario', 'cliente', 'profissional'])->find($id);
 
         if ($venda) {
             return ApiResponse::success($venda);
