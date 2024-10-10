@@ -105,9 +105,6 @@ return [
             explode(',', env('APP_PREVIOUS_KEYS', ''))
         ),
     ],
-    'previous' => [
-        PHPJasperServiceProvider::class,
-    ],
     /*
     |--------------------------------------------------------------------------
     | Maintenance Mode Driver

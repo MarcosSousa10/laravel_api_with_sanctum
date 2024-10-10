@@ -12,29 +12,26 @@ use Illuminate\Support\Str;
 use App\Mail\VerificationEmail;
 use App\Models\Session;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\URL;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        // Validação dos dados de entrada
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
-        // Obter as credenciais
         $credentials = $request->only('email', 'password');
 
-        // Tentar autenticar o usuário
         if (!Auth::attempt($credentials)) {
             return ApiResponse::unauthorized('Credenciais inválidas.');
         }
 
-        // Obter o usuário autenticado
         $user = Auth::user();
 
-        // Verificar se o e-mail foi verificado
         if (!$user->email_verified_at) {
             return ApiResponse::error('Por favor, verifique seu e-mail antes de fazer login.');
         }
@@ -55,7 +52,6 @@ class AuthController extends Controller
 
         $token = $user->createToken($user->name, ['*'], now()->addDay())->plainTextToken;
 
-        // Retornar resposta de sucesso
         return ApiResponse::success([
             'user' => $user->name,
             'email' => $user->email,
@@ -65,7 +61,6 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        // Remove o token de autenticação
         $request->user()->tokens()->delete();
 
         session()->forget('user_id');
@@ -124,5 +119,44 @@ class AuthController extends Controller
         Log::info('Usuário verificado: ' . $user->email);
 
         return ApiResponse::success('E-mail verificado com sucesso. Agora você pode fazer login.');
+    }
+    public function forgotPassword(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+    
+        // Tente enviar o link de redefinição de senha
+        $status = Password::sendResetLink($request->only('email'));
+
+        if ($status === Password::RESET_LINK_SENT) {
+            return response()->json(['message' => __($status)], 200);
+        } else {
+            return response()->json(['message' => __($status)], 400);
+        }
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password),
+                ])->setRememberToken(Str::random(60));
+
+                $user->save();
+            }
+        );
+
+        if ($status === Password::PASSWORD_RESET) {
+            return ApiResponse::success('Senha redefinida com sucesso.');
+        }
+
+        return ApiResponse::error('Erro ao redefinir a senha.', ['status' => $status]);
     }
 }

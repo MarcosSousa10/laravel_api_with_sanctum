@@ -15,6 +15,8 @@ use App\Mail\NewEmail;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\AgendamentoController;
 use App\Http\Controllers\AgendaDeContatoController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\AvaliacaoDeServicoController;
 use App\Http\Controllers\CampanhaDeMarketingController;
 use App\Http\Controllers\CartaoPresenteController;
@@ -42,8 +44,19 @@ use App\Http\Middleware\LogAuditoria;
 Route::get('/status', function () {
     return ApiResponse::success('API is running');
 })->middleware('auth:sanctum');
+Route::get('/report', [ReportController::class, 'generateReport']);
+Route::get('/reportTransacao', [ReportController::class, 'generateReport1']);
 
 //Route::apiResource('cliente', ClientController::class)->middleware('auth:sanctum');
+Route::get('password/reset', [ResetPasswordController::class, 'showResetForm'])->name('password.request');
+Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
+Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+
+Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+
 Route::get('/verify-email/{token}', [AuthController::class, 'verifyEmail']);
 Route::get('cliente', [ClientController::class, "index"])->middleware('auth:sanctum', LogAuditoria::class);
 Route::post('cliente', [ClientController::class, "store"])->middleware('auth:sanctum', LogAuditoria::class);
@@ -57,7 +70,6 @@ Route::post('/send-email', [EmailController::class, 'sendEmail'])->middleware(['
 Route::get('/new_user_confirmation/{token}', [AuthController::class, 'new_user_confirmation']);
 Route::post('/enviar-email', [EmailController::class, 'enviarEmail'])->middleware('auth:sanctum', CheckIfProfessional::class, LogAuditoria::class);
 Route::get('/clientes/email', [ClienteController::class, 'getByEmail'])->middleware('auth:sanctum', LogAuditoria::class);
-Route::get('/report', [ReportController::class, 'generateReport']);
 Route::get('/agendamentos/por-email', [AgendamentoController::class, 'filtrarPorEmail'])->middleware('auth:sanctum', LogAuditoria::class);
 Route::get('/agendamentos/agendados', [AgendamentoController::class, 'filtrarAgendados'])->middleware('auth:sanctum', LogAuditoria::class);
 Route::apiResource('clientes', ClienteController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
