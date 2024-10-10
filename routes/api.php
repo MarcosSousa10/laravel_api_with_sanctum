@@ -46,6 +46,8 @@ Route::get('/status', function () {
     return ApiResponse::success('API is running');
 })->middleware('auth:sanctum');
 Route::get('/report', [ReportController::class, 'generateReport']);
+Route::get('/reportSales', [ReportController::class, 'generateReportSales']);
+Route::get('/reportSalesItens/{id}', [ReportController::class, 'generateReportSalesItens']);
 Route::get('/reportTransacao', [ReportController::class, 'generateReport1']);
 
 //Route::apiResource('cliente', ClientController::class)->middleware('auth:sanctum');
@@ -121,7 +123,6 @@ Route::apiResource('fornecedores', FornecedorController::class)->middleware(['au
 Route::apiResource('inventario', InventarioController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('logs-de-auditoria', LogDeAuditoriaController::class)->middleware(['auth:sanctum', CheckIfProfessional::class, LogAuditoria::class]);
 Route::apiResource('preferencias-dos-clientes', PreferenciasDosClientesController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
-Route::apiResource('produtos', ProdutoController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('programas-fidelidade', ProgramaFidelidadeController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('promocoes-ativas', PromocoesAtivasController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('templates-de-notificacoes', TemplatesDeNotificacoesController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
