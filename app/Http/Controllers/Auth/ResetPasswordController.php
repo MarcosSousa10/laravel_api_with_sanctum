@@ -36,7 +36,7 @@ class ResetPasswordController extends Controller
         $user->password = bcrypt($request->password);
         $user->save();
 
-        return redirect()->route('login')->with('status', 'Senha alterada com sucesso.');
+        return response()->json(['status' => 'Senha alterada com sucesso.'], 200);
     }
 
 }
