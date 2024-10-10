@@ -56,6 +56,11 @@ Route::get('password/reset/{token}', [ResetPasswordController::class, 'showReset
 Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+Route::get('/verification/result', function () {
+    $mensagem = request('message'); // Captura o parâmetro da query
+    return view('verification.result', ['mensagem' => $mensagem]); // Passa para a view
+})->name('verification/result');
+
 
 Route::get('/verify-email/{token}', [AuthController::class, 'verifyEmail']);
 Route::get('cliente', [ClientController::class, "index"])->middleware('auth:sanctum', LogAuditoria::class);

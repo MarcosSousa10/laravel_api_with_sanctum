@@ -98,32 +98,42 @@ class AuthController extends Controller
 
         return ApiResponse::success('Usuário registrado com sucesso. Por favor, verifique seu e-mail.');
     }
-
     public function verifyEmail($token)
     {
         Log::info('Verificando token: ' . $token);
         $user = User::where('email_verification_token', $token)->first();
 
         if (!$user) {
-            return ApiResponse::error('Token inválido.');
+            Log::warning('Token inválido: ' . $token);
+            return redirect()->route('verification/result', ['message' => 'Token inválido.']);
         }
 
         if ($user->email_verified_at) {
-            return ApiResponse::error('Este e-mail já foi verificado.');
+            Log::info('E-mail já verificado: ' . $user->email);
+            return redirect()->route('verification/result', ['message' => 'Este e-mail já foi verificado.']);
         }
 
+        // Atualizando a verificação de email
+        $user->email_verified = true;
         $user->email_verified_at = now();
         $user->email_verification_token = null;
         $user->save();
 
         Log::info('Usuário verificado: ' . $user->email);
-
-        return ApiResponse::success('E-mail verificado com sucesso. Agora você pode fazer login.');
+        return redirect()->route('verification/result', ['message' => 'E-mail verificado com sucesso. Agora você pode fazer login.']);
     }
+
+
+public function verificationResult()
+{
+    return view('verification.result');
+}
+
+
     public function forgotPassword(Request $request)
     {
         $request->validate(['email' => 'required|email']);
-    
+
         // Tente enviar o link de redefinição de senha
         $status = Password::sendResetLink($request->only('email'));
 
