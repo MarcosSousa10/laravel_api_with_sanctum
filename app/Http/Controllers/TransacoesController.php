@@ -9,7 +9,7 @@ class TransacoesController extends Controller
 {
     public function index()
     {
-        $transacoes = Transacoes::with(['agendamento', 'filial'])->get(); // Carregando relacionamentos
+        $transacoes = Transacoes::with(['agendamento', 'venda', 'filial'])->get(); // Carregar todos os relacionamentos
         return response()->json($transacoes);
     }
 
@@ -20,8 +20,14 @@ class TransacoesController extends Controller
             'metodo_pagamento' => 'required|string',
             'valor_pago' => 'required|numeric',
             'agendamento_id' => 'nullable|exists:agendamentos,id',
+            'venda_id' => 'nullable|exists:vendas,id', // Validação para venda
             'filial_id' => 'required|exists:filiais,filial_id',
         ]);
+
+        // Verificar se pelo menos um dos dois (agendamento ou venda) foi fornecido
+        if (!$request->agendamento_id && !$request->venda_id) {
+            return response()->json(['error' => 'Você deve fornecer um agendamento ou uma venda.'], 422);
+        }
 
         $transacao = Transacoes::create($request->all());
         return response()->json($transacao, 201);
@@ -29,7 +35,7 @@ class TransacoesController extends Controller
 
     public function show($id)
     {
-        $transacao = Transacoes::with(['agendamento', 'filial'])->findOrFail($id);
+        $transacao = Transacoes::with(['agendamento', 'venda', 'filial'])->findOrFail($id);
         return response()->json($transacao);
     }
 
@@ -40,8 +46,13 @@ class TransacoesController extends Controller
             'metodo_pagamento' => 'required|string',
             'valor_pago' => 'required|numeric',
             'agendamento_id' => 'nullable|exists:agendamentos,id',
+            'venda_id' => 'nullable|exists:vendas,id',
             'filial_id' => 'required|exists:filiais,filial_id',
         ]);
+
+        if (!$request->agendamento_id && !$request->venda_id) {
+            return response()->json(['error' => 'Você deve fornecer um agendamento ou uma venda.'], 422);
+        }
 
         $transacao = Transacoes::findOrFail($id);
         $transacao->update($request->all());

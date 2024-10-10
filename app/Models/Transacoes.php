@@ -16,10 +16,11 @@ class Transacoes extends Model
         'metodo_pagamento',
         'valor_pago',
         'agendamento_id',
+        'venda_id', // Adicionando venda_id
         'filial_id',
     ];
 
-    public $timestamps = true; // Usar timestamps padrão do Laravel
+    public $timestamps = true;
 
     // Relacionamentos
     public function agendamento()
@@ -30,5 +31,10 @@ class Transacoes extends Model
     public function filial()
     {
         return $this->belongsTo(Filial::class, 'filial_id');
+    }
+
+    public function venda()
+    {
+        return $this->belongsTo(Venda::class, 'venda_id'); // Relacionamento com venda
     }
 }
