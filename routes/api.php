@@ -25,6 +25,7 @@ use App\Http\Controllers\ComunicacaoClienteController;
 use App\Http\Controllers\ConfiguracaoDoSistemaController;
 use App\Http\Controllers\ContaAPagarController;
 use App\Http\Controllers\DesempenhoDosFuncionariosController;
+use App\Http\Controllers\EmailSettingsController;
 use App\Http\Controllers\FornecedorController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\LogDeAuditoriaController;
@@ -57,9 +58,10 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::get('/verification/result', function () {
-    $mensagem = request('message'); // Captura o parâmetro da query
-    return view('verification.result', ['mensagem' => $mensagem]); // Passa para a view
+    $mensagem = request('message');
+        return view('verification.result', ['mensagem' => $mensagem]);
 })->name('verification/result');
+Route::post('/update-email-settings', [EmailSettingsController::class, 'update']);
 
 
 Route::get('/verify-email/{token}', [AuthController::class, 'verifyEmail']);
