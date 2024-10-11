@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cliente;
 use App\Models\Venda;
 use App\Models\Inventario;
 use App\Models\Transacoes;
@@ -14,67 +15,69 @@ class VendasController extends Controller
      * Registra uma nova venda no sistema.
      */
     public function store(Request $request)
-{
-    // Valida os dados da requisição
-    $request->validate([
-        'cliente_id' => 'required|integer',
-        'profissional_id' => 'required|integer',
-        'inventarios' => 'required|array',
-        'inventarios.*.inventario_id' => 'required|integer|exists:inventario,id',
-        'inventarios.*.quantidade' => 'required|integer|min:1',
-        'metodo_pagamento' => 'required|string',
-    ]);
-
-    $venda = Venda::create([
-        'cliente_id' => $request->cliente_id,
-        'profissional_id' => $request->profissional_id,
-        'preco_total' => 0,
-        'data_venda' => now(),
-    ]);
-
-    $precoTotal = 0;
-
-    foreach ($request->inventarios as $produtoData) {
-        $inventario = Inventario::find($produtoData['inventario_id']);
-
-        if (!$inventario) {
-            return response()->json(['error' => 'Inventário não encontrado'], 404);
-        }
-
-        if ($inventario->quantidade < $produtoData['quantidade']) {
-            return response()->json(['error' => 'Quantidade solicitada não disponível'], 400);
-        }
-
-        $inventario->quantidade -= $produtoData['quantidade'];
-        $inventario->save();
-
-        $precoTotal += $inventario->preco * $produtoData['quantidade'];
-
-        $venda->produtos()->attach($inventario->id, [
-            'quantidade' => $produtoData['quantidade'],
-            'preco_total' => $inventario->preco * $produtoData['quantidade'],
+    {
+        // Valida os dados da requisição
+        $request->validate([
+            'cliente_id' => 'required|integer',
+            'profissional_id' => 'required|integer',
+            'inventarios' => 'required|array',
+            'inventarios.*.inventario_id' => 'required|integer|exists:inventario,id',
+            'inventarios.*.quantidade' => 'required|integer|min:1',
+            'metodo_pagamento' => 'required|string',
         ]);
+
+        $venda = Venda::create([
+            'cliente_id' => $request->cliente_id,
+            'profissional_id' => $request->profissional_id,
+            'preco_total' => 0,
+            'data_venda' => now(),
+        ]);
+
+        $precoTotal = 0;
+
+        foreach ($request->inventarios as $produtoData) {
+            $inventario = Inventario::find($produtoData['inventario_id']);
+
+            if (!$inventario) {
+                return response()->json(['error' => 'Inventário não encontrado'], 404);
+            }
+
+            if ($inventario->quantidade < $produtoData['quantidade']) {
+                return response()->json(['error' => 'Quantidade solicitada não disponível'], 400);
+            }
+
+            $inventario->quantidade -= $produtoData['quantidade'];
+            $inventario->save();
+
+            $precoTotal += $inventario->preco * $produtoData['quantidade'];
+
+            $venda->produtos()->attach($inventario->id, [
+                'quantidade' => $produtoData['quantidade'],
+                'preco_total' => $inventario->preco * $produtoData['quantidade'],
+            ]);
+        }
+
+        // Atualiza o preço total da venda após adicionar todos os produtos
+        $venda->preco_total = $precoTotal;
+        $venda->save();
+
+        // Criar automaticamente a transação após a venda
+        $transacao = Transacoes::create([
+            'data_transacao' => now(),
+            'metodo_pagamento' => $request->metodo_pagamento, // Recebido do request
+            'valor_pago' => $precoTotal,
+            'venda_id' => $venda->id,
+            'filial_id' => $request->filial_id,
+        ]);
+
+        $cliente = Cliente::find($request->cliente_id);
+        $cliente->adicionarPontos($precoTotal);
+
+        return response()->json([
+            'venda' => $venda,
+            'transacao' => $transacao,
+        ], 201);
     }
-
-    // Atualiza o preço total da venda após adicionar todos os produtos
-    $venda->preco_total = $precoTotal;
-    $venda->save();
-
-    // Criar automaticamente a transação após a venda
-    $transacao = Transacoes::create([
-        'data_transacao' => now(),
-        'metodo_pagamento' => $request->metodo_pagamento, // Recebido do request
-        'valor_pago' => $precoTotal,
-        'venda_id' => $venda->id, // Associa a transação à venda recém-criada
-        'filial_id' => $request->filial_id, // Adicione isso ao request se necessário
-    ]);
-
-    // Retorna a venda junto com a transação criada
-    return response()->json([
-        'venda' => $venda,
-        'transacao' => $transacao,
-    ], 201);
-}
 
     public function store1(Request $request)
     {

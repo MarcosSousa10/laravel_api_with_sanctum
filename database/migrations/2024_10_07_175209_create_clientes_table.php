@@ -19,7 +19,8 @@ class CreateClientesTable extends Migration
             $table->string('endereco', 255)->nullable();
             $table->string('nome', 100)->unique();
             $table->string('telefone', 20);
-            $table->timestamps(); 
+            $table->integer('pontos')->default(0);
+            $table->timestamps();
         });
     }
 
