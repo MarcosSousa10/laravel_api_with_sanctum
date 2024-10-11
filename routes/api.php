@@ -9,10 +9,8 @@ use App\Http\Controllers\ProfissionalController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ServicoController;
 use App\Services\ApiResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Mail\NewEmail;
-use Illuminate\Support\Facades\Mail;
+
 use App\Http\Controllers\AgendamentoController;
 use App\Http\Controllers\AgendaDeContatoController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
