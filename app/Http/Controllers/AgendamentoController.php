@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Agendamento;
+use App\Models\TransacaoInventario;
+use App\Models\Transacoes;
 use App\Services\ApiResponse;
 use Illuminate\Http\Request;
 
@@ -72,6 +74,48 @@ class AgendamentoController extends Controller
 
         if ($agendamento) {
             $agendamento->update($request->all());
+
+            // Verifique se o status foi atualizado para "PAGO"
+            if ($request->status === 'PAGO') {
+                // Crie a transação automaticamente
+                $transacao = Transacoes::create([
+                    'agendamento_id' => $agendamento->id,
+                    'data_transacao' => now(),
+                    'metodo_pagamento' => $request->input('metodo_pagamento', 'indefinido'), // Exemplo: cartão, dinheiro, etc.
+                    'valor_pago' => $agendamento->preco_total,
+                    'filial_id' => $agendamento->filial_id,
+                ]);
+
+                // Retorna o agendamento com a transação criada
+                return ApiResponse::success([
+                    'agendamento' => $agendamento,
+                    'transacao' => $transacao,
+                ]);
+            }
+
+            return ApiResponse::success($agendamento);
+        }
+
+        return ApiResponse::error('Agendamento not found', 404);
+    }
+
+    public function update1(Request $request, string $id)
+    {
+        $request->validate([
+            'data_hora_agendamento' => 'required|date',
+            'notas' => 'nullable|string',
+            'preco_total' => 'nullable|numeric',
+            'status' => 'required|string|max:255',
+            'cliente_id' => 'required|exists:clientes,id',
+            'filial_id' => 'required|exists:filiais,filial_id',
+            'profissional_id' => 'required|exists:profissionais,id',
+            'servico_id' => 'required|exists:servicos,id',
+        ]);
+
+        $agendamento = Agendamento::find($id);
+
+        if ($agendamento) {
+            $agendamento->update($request->all());
             return ApiResponse::success($agendamento);
         }
 
@@ -102,23 +146,22 @@ class AgendamentoController extends Controller
         return ApiResponse::success($agendamentos);
     }
 
-public function filtrarPorEmail(Request $request)
-{
-    // Valide o e-mail fornecido
-    $request->validate([
-        'email' => 'required|email',
-    ]);
+    public function filtrarPorEmail(Request $request)
+    {
+        // Valide o e-mail fornecido
+        $request->validate([
+            'email' => 'required|email',
+        ]);
 
-    $email = $request->input('email');
+        $email = $request->input('email');
 
-    // Inicie a consulta com os relacionamentos necessários
-    $agendamentos = Agendamento::with(['cliente', 'filial', 'profissional', 'servico'])
-        ->whereHas('cliente', function ($query) use ($email) {
-            $query->where('email', $email);
-        })
-        ->get();
+        // Inicie a consulta com os relacionamentos necessários
+        $agendamentos = Agendamento::with(['cliente', 'filial', 'profissional', 'servico'])
+            ->whereHas('cliente', function ($query) use ($email) {
+                $query->where('email', $email);
+            })
+            ->get();
 
-    return ApiResponse::success($agendamentos);
-}
-
+        return ApiResponse::success($agendamentos);
+    }
 }
