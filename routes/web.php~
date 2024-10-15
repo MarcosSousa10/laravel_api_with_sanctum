@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
+dd('oi');
+
 Route::get('/', function () {
-    abort(403, 'Unauthorizad access');
+
+    dd(DB::connection()->select('SHOW TABLES;'));
+//    abort(403, 'Unauthorizad access');
 });

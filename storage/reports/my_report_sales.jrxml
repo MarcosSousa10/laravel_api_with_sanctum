@@ -4,7 +4,7 @@
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapter.jrdax"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<queryString>
-		<![CDATA[SELECT 
+		<![CDATA[SELECT
 v.id,
     v.cliente_id,
     v.profissional_id,
@@ -13,15 +13,15 @@ v.id,
     p.nome AS profissional_nome,
     v.data_venda,
            SUM(vp.quantidade) AS quantidade_total_vendida
-FROM 
+FROM
     vendas v
-JOIN 
+JOIN
     profissionais p ON v.profissional_id = p.id
-    JOIN 
+    JOIN
     clientes c ON v.cliente_id = c.id
-JOIN 
+JOIN
     venda_produto vp ON v.id = vp.venda_id
-JOIN 
+JOIN
     inventario iv ON vp.inventario_id = iv.id
 
 ]]>
@@ -106,7 +106,7 @@ JOIN
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
-					<font fontName="Arial" isBold="true"/>
+					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Identificador Venda]]></text>
 			</staticText>
@@ -121,7 +121,7 @@ JOIN
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
-					<font fontName="Arial" isBold="true"/>
+					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Identificador Cliente]]></text>
 			</staticText>
@@ -136,7 +136,7 @@ JOIN
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
-					<font fontName="Arial" isBold="true"/>
+					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Identificador Profissional]]></text>
 			</staticText>
@@ -151,7 +151,7 @@ JOIN
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
-					<font fontName="Arial" isBold="true"/>
+					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Total]]></text>
 			</staticText>
@@ -166,7 +166,7 @@ JOIN
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
-					<font fontName="Arial" isBold="true"/>
+					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Cliente]]></text>
 			</staticText>
@@ -181,7 +181,7 @@ JOIN
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
-					<font fontName="Arial" isBold="true"/>
+					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Profissional]]></text>
 			</staticText>
@@ -196,7 +196,7 @@ JOIN
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
-					<font fontName="Arial" isBold="true"/>
+					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Data Da Venda]]></text>
 			</staticText>
@@ -211,7 +211,7 @@ JOIN
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
-					<font fontName="Arial" isBold="true"/>
+					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Quantidade Total]]></text>
 			</staticText>
@@ -232,7 +232,7 @@ JOIN
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1dcf4e12-1fe2-40d2-949f-3c5e3037ec4a"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
 			</textField>
@@ -241,7 +241,7 @@ JOIN
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="58ba3308-9ade-4b3e-8ffa-22cee8d0c6b9"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cliente_id}]]></textFieldExpression>
 			</textField>
@@ -250,7 +250,7 @@ JOIN
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ab3b45b2-36a8-4ed3-8319-7e611fb2a24d"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{profissional_id}]]></textFieldExpression>
 			</textField>
@@ -259,7 +259,7 @@ JOIN
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cf899b41-2ca6-407d-bf65-c4bd76302bae"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{preco_total}]]></textFieldExpression>
 			</textField>
@@ -268,7 +268,7 @@ JOIN
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1c2503d8-e6b8-4fbe-b00f-a92c31f63be7"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cliente_nome}]]></textFieldExpression>
 			</textField>
@@ -277,7 +277,7 @@ JOIN
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="241c37bb-a153-4e77-bfe4-876f21331c40"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{profissional_nome}]]></textFieldExpression>
 			</textField>
@@ -286,7 +286,7 @@ JOIN
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d2ca90e6-f82c-4856-b9c3-cbd418bc3fb0"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{data_venda}]]></textFieldExpression>
 			</textField>
@@ -295,7 +295,7 @@ JOIN
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f094d4ee-e931-4712-8793-74b6a8d47b8c"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{quantidade_total_vendida}]]></textFieldExpression>
 			</textField>
@@ -316,3 +316,4 @@ JOIN
 		<band height="42" splitType="Stretch"/>
 	</summary>
 </jasperReport>
+
