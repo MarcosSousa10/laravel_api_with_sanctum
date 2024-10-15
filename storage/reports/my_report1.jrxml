@@ -88,7 +88,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<text><![CDATA[identificador Agendamento]]></text>
 			</staticText>
@@ -101,7 +101,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<text><![CDATA[Valor Pago]]></text>
 			</staticText>
@@ -114,7 +114,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<text><![CDATA[Metodo de Pagamento]]></text>
 			</staticText>
@@ -127,7 +127,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<text><![CDATA[Data da Ultima Atualização]]></text>
 			</staticText>
@@ -140,7 +140,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<text><![CDATA[Data de criação]]></text>
 			</staticText>
@@ -153,7 +153,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<text><![CDATA[Identificador]]></text>
 			</staticText>
@@ -177,7 +177,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cca238f1-e40f-4e95-a80d-44f66d6bf622"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
 			</textField>
@@ -186,7 +186,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="162cbe7f-43ff-410d-8c35-1fc531e9978b"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{created_at}]]></textFieldExpression>
 			</textField>
@@ -195,7 +195,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f9074835-2f35-4708-a2eb-f0ea6e0d15fa"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial"/>
+					<font fontName="DejaVu Sans"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{data_transacao}]]></textFieldExpression>
 			</textField>
@@ -204,7 +204,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="768b8506-aa5d-4e47-98e4-499424b174d3"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" isItalic="true"/>
+					<font fontName="DejaVu Sans" isItalic="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{metodo_pagamento}]]></textFieldExpression>
 			</textField>
@@ -213,7 +213,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="27a47ba3-564a-4078-9a09-e3c99ee1228c"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" isItalic="true"/>
+					<font fontName="DejaVu Sans" isItalic="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{valor_pago}]]></textFieldExpression>
 			</textField>
@@ -222,7 +222,7 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1b091f80-0d4a-4801-87fc-4e97447c8ba1"/>
 				</reportElement>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" isItalic="true"/>
+					<font fontName="DejaVu Sans" isItalic="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{agendamento_id}]]></textFieldExpression>
 			</textField>
@@ -235,7 +235,7 @@
 					<property name="com.jaspersoft.studio.element.name" value="$"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="Arial" size="13" isBold="true" isItalic="true" isUnderline="false"/>
+					<font fontName="DejaVu Sans" size="13" isBold="true" isItalic="true" isUnderline="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{valor_pago1}
 ]]></textFieldExpression>
@@ -247,7 +247,7 @@
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font fontName="Arial" size="13" isBold="true"/>
+					<font fontName="DejaVu Sans" size="13" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Total Vendido:$]]></text>
 			</staticText>
