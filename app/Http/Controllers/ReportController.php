@@ -1,14 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-<<<<<<< HEAD
-=======
-
->>>>>>> 0743a6d34865b36714887f5c1989b81bf8adcc29
 use Exception;
 use PHPJasper\PHPJasper;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\Facades\DB;
 
@@ -295,13 +290,6 @@ public function generateReportSales(Request $request)
         $jasper = new PHPJasper();
 
         try {
-            // Testa a conexão com o banco de dados
-            DB::connection()->getPdo();
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Erro ao conectar ao banco de dados: ' . $e->getMessage()], 500);
-        }
-
-        try {
             // Compila o relatório JRXML
             $jasper->compile(storage_path('reports/my_report_sales.jrxml'))->execute();
         } catch (\Exception $e) {
@@ -311,12 +299,10 @@ public function generateReportSales(Request $request)
         $input = storage_path('reports/my_report_sales.jasper');
         $output = storage_path('reports/my_report_sales');
 
-        // Defina seus parâmetros, se necessário
         $params = [
-            // Exemplo de parâmetro: 'parametro' => 'valor'
+            // Adicione parâmetros se necessário
         ];
 
-<<<<<<< HEAD
         $options = [
             'format' => ['pdf'],
             'params' => $params,
@@ -332,62 +318,25 @@ public function generateReportSales(Request $request)
 
             ],
         ];
-=======
-        $jdbc_dir = base_path('vendor/geekcom/phpjasper-laravel/bin/jasperstarter/jdbc'); // Diretório JDBC
->>>>>>> 0743a6d34865b36714887f5c1989b81bf8adcc29
 
-        // Configurações da conexão com o banco de dados
-            $options = [
-                'format' => ['pdf'],
-                'params' => $params,
-                'db_connection' => [
-                    'driver' => 'mysql',
-                    'host' => env('DB_HOST', '127.0.0.1'),
-                    'port' => env('DB_PORT', '3306'),
-                    'database' => env('DB_DATABASE', 'laravel_api_with_sanctums'),
-                    'username' => env('DB_USERNAME', 'user_laravel_api_with_sanctum'),
-                    'password' => env('DB_PASSWORD', 'acb'),
-                    'jdbc_driver' => 'com.mysql.cj.jdbc.Driver',
-                    'jdbc_url' => 'jdbc:mysql://' . env('DB_HOST', '127.0.0.1') . ':' . env('DB_PORT', '3306') . '/' . env('DB_DATABASE', 'laravel_api_with_sanctums'),
-                ],
-            ];
+        try {
 
+            $jasper->process($input, $output, $options)->execute();
 
-            try {
-                // Comando a ser executado como o usuário apache
-           // $command = "/var/www/laravel_api_with_sanctum/vendor/geekcom/phpjasper-laravel/bin/jasperstarter/bin/jasperstarter process $input -o $output -f pdf --jdbc-dir $j>            $report = $jasper->process($input, $output, $options)->execute();
-        //Log::info('Relatório processado com sucesso: ' . $report . '.pdf');
-          //Log::info('Executando comando Jasper: ', [
-            //            'input' => $input,
-              //        'output' => $output,
-                //        'options' => $options,
-                  //  ]);
+            $file = $output . '.pdf';
 
-                // Executa o comando e captura a saída
-        //        exec($command . ' 2>&1', $outputArray, $returnVar); // Captura erros também
-        //Log::info('Executando comando Jasper: ', [$command]);
-
-                // Verifica se o comando foi bem-sucedido
-
-          //      if ($returnVar !== 0) {
-            //      throw new Exception('Erro ao executar o comando: ' . implode("\n", $outputArray));
-            //}
-
-                $file = $output . '.pdf';
-
-                if (file_exists($file)) {
-                    return response()->file($file, [
-                        'Content-Type' => 'application/pdf; charset=UTF-8',
-                        'Content-Disposition' => 'inline; filename="report.pdf"',
-                    ]);
-                } else {
-                    return response()->json(['success' => false, 'message' => 'Arquivo PDF não encontrado.'], 404);
-                }
-            } catch (Exception $e) {
-                // Captura e retorna qualquer erro que ocorrer
-                return response()->json(['success' => false, 'message' => 'Erro ao gerar o relatório: ' . $e->getMessage()], 500);
+            if (file_exists($file)) {
+                return response()->file($file, [
+                    'Content-Type' => 'application/pdf; charset=UTF-8',
+                    'Content-Disposition' => 'inline; filename="my_report_sales.pdf"',
+                ]);
             }
+
+            return response()->json(['message' => 'Relatório não encontrado'], 500);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erro ao gerar o relatório: ' . $e->getMessage()], 500);
         }
+    }
     public function generateReportSalesItens(Request $request, $id)
     {
         $jasper = new PHPJasper();
