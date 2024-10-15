@@ -42,6 +42,7 @@ public function generateReport(Request $request)
         $options = [
             'format' => ['pdf'],
             'params' => $params,
+            'locale' => 'pt_BR',
             'db_connection' => [
                 'driver' => 'mysql',
                 'host' => env('DB_HOST', '127.0.0.1'),
@@ -236,6 +237,7 @@ public function generateReportSales(Request $request)
         $options = [
             'format' => ['pdf'],
             'params' => $params,
+            'locale' => 'pt_BR',
             'db_connection' => [
                 'driver' => 'mysql',
                 'host' => env('DB_HOST', '127.0.0.1'),
