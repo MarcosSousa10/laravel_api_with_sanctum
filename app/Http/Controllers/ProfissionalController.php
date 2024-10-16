@@ -15,13 +15,16 @@ class ProfissionalController extends Controller
     {
         $profissionais = Profissional::all();
        // $host = request()->getHost(); // Obtém o host atual da requisição
-        $host = '192.168.201.77:8000'; // Obtém o host atual da requisição
+      //  $host = '192.168.201.77:8000'; // Obtém o host atual da requisição
    //     $host = file_get_contents('https://ipinfo.io/ip');
 
         foreach ($profissionais as $profissional) {
-            $profissional->image_url = $profissional->imagem ? 'http://' . $host . '/images/' . $profissional->imagem : null;
+            if ($profissional->imagem) {
+            $profissional->image_url = asset('images/' . $profissional->imagem);
+        } else {
+            $filial->imagem_url = null; 
         }
-
+    }
         return ApiResponse::success($profissionais);
     }
 

@@ -21,7 +21,7 @@ class FilialController extends Controller
             if ($filial->imagem) {
                 $filial->imagem_url = asset('images/' . $filial->imagem);
             } else {
-                $filial->imagem_url = null; // Se não houver imagem, define como null
+                $filial->imagem_url = null; 
             }
         }
 
@@ -42,7 +42,6 @@ class FilialController extends Controller
             'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validação da imagem
         ]);
 
-        // Tratando o upload da imagem
         if ($request->hasFile('imagem')) {
             $imageName = time() . '.' . $request->imagem->extension();
             $request->imagem->move(public_path('images'), $imageName);
@@ -50,7 +49,6 @@ class FilialController extends Controller
             $imageName = null; // Se não houver imagem, mantém como null
         }
 
-        // Criando a filial com os dados validados e incluindo o nome da imagem
         $filial = Filial::create([
             'ct' => $request->input('ct'),
             'endereco' => $request->input('endereco'),

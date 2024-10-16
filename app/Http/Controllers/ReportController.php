@@ -88,7 +88,6 @@ public function generateReport(Request $request)
             return response()->json(['success' => false, 'message' => 'Arquivo PDF não encontrado.'], 404);
         }
     } catch (Exception $e) {
-        // Captura e retorna qualquer erro que ocorrer
         return response()->json(['success' => false, 'message' => 'Erro ao gerar o relatório: ' . $e->getMessage()], 500);
     }
 }
@@ -99,7 +98,6 @@ public function generateReportdd(Request $request)
     $jasper = new PHPJasper();
 
     try {
-        // Compila o relatório JRXML
         $jasper->compile(storage_path('reports/my_report.jrxml'))->execute();
     } catch (\Exception $e) {
         return response()->json(['error' => 'Erro ao compilar o relatório: ' . $e->getMessage()], 500);
@@ -108,12 +106,9 @@ public function generateReportdd(Request $request)
     $input = storage_path('reports/my_report.jasper');
     $output = storage_path('reports/my_report');
 
-    // Defina seus parâmetros, se necessário
     $params = [
-        // Exemplo de parâmetro: 'parametro' => 'valor'
     ];
 
-    // Configurações da conexão com o banco de dados
 $options = [
     'format' => ['pdf'],
     'params' => $params,
