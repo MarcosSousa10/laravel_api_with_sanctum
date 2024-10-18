@@ -19,7 +19,16 @@ class AvaliacaoDeServicoController extends Controller
         return ApiResponse::success($avaliacoes);
     }
     
-
+    public function verificarAvaliacao(Request $request, $agendamento_id)
+    {
+        $avaliado = AvaliacaoDeServico::where('agendamento_id', $agendamento_id)->exists();
+        
+        if ($avaliado) {
+            return ApiResponse::success(['message' => 'Já foi avaliado.']);
+        } else {
+            return ApiResponse::success(['message' => 'Ainda não foi avaliado.']);
+        }
+    }
     /**
      * Store a newly created resource in storage.
      */
@@ -27,7 +36,7 @@ class AvaliacaoDeServicoController extends Controller
     {
         $request->validate([
             'comentario' => 'nullable|string',
-            'nota' => 'required|integer|min:1|max:5', // Exemplo de validação de nota de 1 a 5
+            'nota' => 'required|integer|min:1|max:5', 
             'agendamento_id' => 'required|exists:agendamentos,id',
             'cliente_id' => 'required|exists:clientes,id',
         ]);

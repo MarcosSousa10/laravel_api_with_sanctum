@@ -8,8 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class AvaliacaoDeServico extends Model
 {
     use HasFactory;
+
+    // Define o nome da tabela, se diferente do padrão
     protected $table = 'avaliacoes_de_servicos';
 
+    // Campos que podem ser preenchidos em massa
     protected $fillable = [
         'comentario',
         'nota',
@@ -22,7 +25,7 @@ class AvaliacaoDeServico extends Model
      */
     public function agendamento()
     {
-        return $this->belongsTo(Agendamento::class);
+        return $this->belongsTo(Agendamento::class, 'agendamento_id');
     }
 
     /**
@@ -30,6 +33,6 @@ class AvaliacaoDeServico extends Model
      */
     public function cliente()
     {
-        return $this->belongsTo(Cliente::class);
+        return $this->belongsTo(Cliente::class, 'cliente_id');
     }
 }

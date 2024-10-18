@@ -69,6 +69,7 @@ Route::post('/update-email-settings', [EmailSettingsController::class, 'update']
 
 Route::get('/verify-email/{token}', [AuthController::class, 'verifyEmail']);
 Route::get('cliente', [ClientController::class, "index"])->middleware('auth:sanctum', LogAuditoria::class);
+Route::get('/avaliacoes/{agendamento_id}/verificar', [AvaliacaoDeServicoController::class, 'verificarAvaliacao']);
 
 Route::post('cliente', [ClientController::class, "store"])->middleware('auth:sanctum', LogAuditoria::class);
 Route::get('cliente/{client}', [ClientController::class, "show"])->middleware('auth:sanctum', LogAuditoria::class);

@@ -14,6 +14,8 @@ use App\Models\Session;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\URL;
+use App\Models\Cliente;
+use App\Models\Profissional;
 
 class AuthController extends Controller
 {
@@ -84,10 +86,19 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
+            'tipo' => 'required|in:cliente,profissional', // Adicione esta validação
+            'data_nascimento' => 'nullable|date', // Para cliente
+            'endereco' => 'nullable|string|max:255', // Para cliente
+            'telefone' => 'nullable|string|max:20', // Para cliente e profissional
+            'especialidade' => 'nullable|string', // Para profissional
+            'disponibilidade' => 'nullable|string', // Para profissional
+            'taxa_comissao' => 'nullable|numeric', // Para profissional
+            'imagem' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Para profissional
         ]);
 
         $verificationToken = Str::random(64);
 
+        // Criação do usuário
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -95,9 +106,38 @@ class AuthController extends Controller
             'email_verification_token' => $verificationToken,
         ]);
 
+        // Envio do e-mail de verificação
         Mail::to($user->email)->send(new VerificationEmail($user));
 
-        return ApiResponse::success('Usuário registrado com sucesso. Por favor, verifique seu e-mail.');
+        // Criação do cliente ou profissional baseado no tipo
+        if ($request->tipo === 'cliente') {
+            $cliente = Cliente::create([
+                'data_nascimento' => $request->data_nascimento,
+                'email' => $request->email,
+                'endereco' => $request->endereco,
+                'nome' => $user->name,
+                'telefone' => $request->telefone,
+            ]);
+        } elseif ($request->tipo === 'profissional') {
+            $imageName = null;
+            if ($request->hasFile('imagem')) {
+                $imageName = time() . '.' . $request->imagem->extension();
+                $request->imagem->move(public_path('images'), $imageName);
+            }
+
+            $profissional = Profissional::create(array_merge($request->only([
+                'nome',
+                'email',
+                'telefone',
+                'especialidade',
+                'disponibilidade',
+                'taxa_comissao',
+            ]), ['imagem' => $imageName]));
+        }
+
+        return response()->json([
+            'message' => 'Usuário registrado com sucesso. Por favor, verifique seu e-mail.'
+        ], 201);
     }
     public function verifyEmail($token)
     {
