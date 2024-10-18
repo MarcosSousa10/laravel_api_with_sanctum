@@ -12,7 +12,6 @@ class RolePermissionController extends Controller
 
     public function assignRole(Request $request, $userId)
     {
-        // Validação dos dados recebidos
         $request->validate([
             'role' => 'required|string',
             'permission' => 'required|string',
@@ -20,27 +19,23 @@ class RolePermissionController extends Controller
 
         $user = User::findOrFail($userId);
         $roleName = $request->input('role');
-        $permissionName = $request->input('permission'); // agora recebe o nome da permissão do JSON
-
-        // Verifica se o papel existe e cria se não existir
+        $permissionName = $request->input('permission'); 
+        
         if (!Role::where('name', $roleName)->exists()) {
             $role = Role::create(['name' => $roleName]);
         } else {
             $role = Role::findByName($roleName);
         }
 
-        // Atribui o papel ao usuário se ele não tiver
         if (!$user->hasRole($role)) {
             $user->assignRole($role);
 
-            // Verifica se a permissão existe e cria se não existir
             if (!Permission::where('name', $permissionName)->exists()) {
                 $permission = Permission::create(['name' => $permissionName]);
             } else {
                 $permission = Permission::findByName($permissionName);
             }
 
-            // Verifica se o usuário já tem a permissão e a atribui
             if (!$user->hasPermissionTo($permission)) {
                 $user->givePermissionTo($permission);
             }

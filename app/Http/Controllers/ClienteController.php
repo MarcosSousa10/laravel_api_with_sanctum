@@ -14,7 +14,8 @@ class ClienteController extends Controller
         $clientes = Cliente::all();
         return response()->json($clientes);
     }
-
+   
+    
     // Método para criar um novo cliente
     public function store(Request $request)
     {
@@ -37,32 +38,33 @@ class ClienteController extends Controller
         return response()->json($cliente);
     }
 
-        public function getByEmail(Request $request)
-        {
-            // Validar o e-mail
-            $request->validate([
-                'email' => 'required|email',
-            ]);
-
-            // Capturar o e-mail da query string
-            $email = $request->query('email');
-
-            // Log para verificar o valor do e-mail
-            Log::info("Email recebido: " . "$email");
-
-            // Verificar se o cliente existe
-            $cliente = Cliente::where('email', "cliente@example.com")->first();
-
-            // Log para verificar o resultado da consulta
-            Log::info("Cliente encontrado: " . json_encode($cliente));
-
-            // Verificar se o cliente foi encontrado
-            if ($cliente) {
-                return response()->json($cliente);
-            } else {
-                return response()->json(['message' => 'Cliente não encontrado'], 404);
-            }
+    public function getByEmail(Request $request)
+    {
+        // Validar o e-mail
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+    
+        // Capturar o e-mail da query string
+        $email = $request->query('email');
+    
+        // Log para verificar o valor do e-mail
+        Log::info("Email recebido: " . $email);
+    
+        // Verificar se o cliente existe usando o e-mail recebido
+        $cliente = Cliente::where('email', $email)->first();
+    
+        // Log para verificar o resultado da consulta
+        Log::info("Cliente encontrado: " . json_encode($cliente));
+    
+        // Verificar se o cliente foi encontrado
+        if ($cliente) {
+            return response()->json($cliente);
+        } else {
+            return response()->json(['message' => 'Cliente não encontrado'], 404);
         }
+    }
+    
 
 
     // Método para atualizar um cliente

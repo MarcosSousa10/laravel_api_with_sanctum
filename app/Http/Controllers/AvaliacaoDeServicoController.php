@@ -13,9 +13,12 @@ class AvaliacaoDeServicoController extends Controller
      */
     public function index()
     {
-        $avaliacoes = AvaliacaoDeServico::all();
+        // Traz as avaliações com os dados do cliente e agendamento (se necessário)
+        $avaliacoes = AvaliacaoDeServico::with(['cliente', 'agendamento'])->get();
+        
         return ApiResponse::success($avaliacoes);
     }
+    
 
     /**
      * Store a newly created resource in storage.

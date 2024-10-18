@@ -43,7 +43,10 @@ use App\Http\Middleware\LogAuditoria;
 Route::get('/status', function () {
     return ApiResponse::success('API is running');
 })->middleware('auth:sanctum');
+Route::get('/comissoes/profissional', [ComissaoController::class, 'buscarComissoesPorEmail']);
+
 Route::get('/report', [ReportController::class, 'generateReport']);
+
 Route::get('/reportSales', [ReportController::class, 'generateReportSales']);
 Route::get('/reportSalesItens/{id}', [ReportController::class, 'generateReportSalesItens']);
 Route::get('/reportTransacao', [ReportController::class, 'generateReport1']);
@@ -66,6 +69,7 @@ Route::post('/update-email-settings', [EmailSettingsController::class, 'update']
 
 Route::get('/verify-email/{token}', [AuthController::class, 'verifyEmail']);
 Route::get('cliente', [ClientController::class, "index"])->middleware('auth:sanctum', LogAuditoria::class);
+
 Route::post('cliente', [ClientController::class, "store"])->middleware('auth:sanctum', LogAuditoria::class);
 Route::get('cliente/{client}', [ClientController::class, "show"])->middleware('auth:sanctum', LogAuditoria::class);
 Route::put('cliente/{client}', [ClientController::class, "update"])->middleware('auth:sanctum', LogAuditoria::class);
@@ -94,10 +98,10 @@ Route::prefix('cartoes-presente')->group(function () {
     Route::post('/{id}/resgatar', [CartaoPresenteController::class, 'resgatar']); // Resgatar cartão
     Route::get('/saldo/{codigo}', [CartaoPresenteController::class, 'verificarSaldo']); // Verificar saldo
 });
-Route::get('vendas', [VendasController::class, 'index']); // Listar todas as vendas
-Route::post('vendas', [VendasController::class, 'store']); // Criar uma nova venda
-Route::get('vendas/{id}', [VendasController::class, 'show']); // Exibir uma venda específica
-Route::put('vendas/{id}', [VendasController::class, 'update']); // Atualizar uma venda específica
+Route::get('vendas', [VendasController::class, 'index']); 
+Route::post('vendas', [VendasController::class, 'store']); 
+Route::get('vendas/{id}', [VendasController::class, 'show']);
+Route::put('vendas/{id}', [VendasController::class, 'update']);
 
 Route::apiResource('servicos', ServicoController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 //Route::apiResource('agendamentos', AgendamentoController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
