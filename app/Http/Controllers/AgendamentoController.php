@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Agendamento;
+use App\Models\Profissional;
+use App\Models\Comissao;
 use App\Models\TransacaoInventario;
 use App\Models\Transacoes;
 use App\Services\ApiResponse;
@@ -53,11 +55,75 @@ class AgendamentoController extends Controller
 
         return ApiResponse::error('Agendamento not found', 404);
     }
-
+    public function update(Request $request, string $id)
+    {
+        // Validação dos dados da requisição
+        $request->validate([
+            'data_hora_agendamento' => 'required|date',
+            'notas' => 'nullable|string',
+            'preco_total' => 'nullable|numeric',
+            'status' => 'required|string|max:255',
+            'cliente_id' => 'required|exists:clientes,id',
+            'filial_id' => 'required|exists:filiais,filial_id',
+            'profissional_id' => 'required|exists:profissionais,id',
+            'servico_id' => 'required|exists:servicos,id',
+        ]);
+    
+        // Buscar o agendamento pelo ID
+        $agendamento = Agendamento::find($id);
+    
+        if ($agendamento) {
+            $agendamento->update($request->all());
+    
+            // Verifique se o status foi atualizado para "PAGO"
+            if ($request->status === 'PAGO') {
+                // Criar a transação automaticamente
+                $transacao = Transacoes::create([
+                    'agendamento_id' => $agendamento->id,
+                    'data_transacao' => now(),
+                    'metodo_pagamento' => $request->input('metodo_pagamento', 'indefinido'),
+                    'valor_pago' => $agendamento->preco_total,
+                    'filial_id' => $agendamento->filial_id,
+                ]);
+    
+                // Buscar a taxa de comissão do profissional
+                $profissional = Profissional::find($agendamento->profissional_id);
+    
+                if (!$profissional) {
+                    return response()->json(['error' => 'Profissional não encontrado'], 404);
+                }
+    
+                // Calcular o valor da comissão com base na taxa de comissão do profissional
+                $valorComissao = ($profissional->taxa_comissao / 100) * $agendamento->preco_total;
+    
+                // Criar a comissão
+                $comissao = Comissao::create([
+                    'profissional_id' => $profissional->id,
+                    'agendamento_id' => $agendamento->id,
+                    'taxa_comissao' => $profissional->taxa_comissao,
+                    'valor_comissao' => $valorComissao,
+                    'data_comissao' => now(),
+                ]);
+    
+                // Retornar o agendamento com a transação e comissão criada
+                return ApiResponse::success([
+                    'agendamento' => $agendamento,
+                    'transacao' => $transacao,
+                    'comissao' => $comissao,
+                ]);
+            }
+    
+            return ApiResponse::success($agendamento);
+        }
+    
+        return ApiResponse::error('Agendamento não encontrado', 404);
+    }
+    
+    
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update0(Request $request, string $id)
     {
         $request->validate([
             'data_hora_agendamento' => 'required|date',
