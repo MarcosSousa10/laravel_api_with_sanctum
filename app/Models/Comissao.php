@@ -12,6 +12,7 @@ class Comissao extends Model
 
     protected $fillable = [
         'agendamento_id',
+        'venda_id', // Adicionando venda_id
         'profissional_id',
         'taxa_comissao',
         'valor_comissao',
@@ -23,6 +24,14 @@ class Comissao extends Model
     public function agendamento()
     {
         return $this->belongsTo(Agendamento::class);
+    }
+
+    /**
+     * Define a relação com a venda.
+     */
+    public function venda()
+    {
+        return $this->belongsTo(Venda::class);
     }
 
     /**

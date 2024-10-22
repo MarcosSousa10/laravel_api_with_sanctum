@@ -59,11 +59,17 @@ class ComissaoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'agendamento_id' => 'required|exists:agendamentos,id',
             'profissional_id' => 'required|exists:profissionais,id',
             'taxa_comissao' => 'required|numeric|min:0|max:100',
             'valor_comissao' => 'required|numeric|min:0',
+            'agendamento_id' => 'nullable|exists:agendamentos,id', // Agora é opcional
+            'venda_id' => 'nullable|exists:vendas,id', // Nova validação para venda
         ]);
+
+        // Verificando se pelo menos um dos dois está presente
+        if (is_null($request->agendamento_id) && is_null($request->venda_id)) {
+            return ApiResponse::error('É necessário preencher pelo menos agendamento_id ou venda_id', 400);
+        }
 
         $comissao = Comissao::create($request->all());
 

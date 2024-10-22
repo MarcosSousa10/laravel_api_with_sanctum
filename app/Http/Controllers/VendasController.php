@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cliente;
+use App\Models\Comissao;
+use App\Models\Profissional;
 use App\Models\Venda;
 use App\Models\Inventario;
 use App\Models\Transacoes;
@@ -11,10 +13,95 @@ use App\Services\ApiResponse;
 
 class VendasController extends Controller
 {
+
+    public function store(Request $request)
+    {
+        // Valida os dados da requisição
+        $request->validate([
+            'cliente_id' => 'required|integer',
+            'profissional_id' => 'required|integer',
+            'inventarios' => 'required|array',
+            'inventarios.*.inventario_id' => 'required|integer|exists:inventario,id',
+            'inventarios.*.quantidade' => 'required|integer|min:1',
+            'metodo_pagamento' => 'required|string',
+'filial_id' => 'required|integer|exists:filiais,filial_id',
+        ]);
+    
+        $venda = Venda::create([
+            'cliente_id' => $request->cliente_id,
+            'profissional_id' => $request->profissional_id,
+            'preco_total' => 0,
+            'data_venda' => now(),
+        ]);
+    
+        $precoTotal = 0;
+    
+        foreach ($request->inventarios as $produtoData) {
+            $inventario = Inventario::find($produtoData['inventario_id']);
+    
+            if (!$inventario) {
+                return response()->json(['error' => 'Inventário não encontrado'], 404);
+            }
+    
+            if ($inventario->quantidade < $produtoData['quantidade']) {
+                return response()->json(['error' => 'Quantidade solicitada não disponível'], 400);
+            }
+    
+            $inventario->quantidade -= $produtoData['quantidade'];
+            $inventario->save();
+    
+            $precoTotal += $inventario->preco * $produtoData['quantidade'];
+    
+            $venda->produtos()->attach($inventario->id, [
+                'quantidade' => $produtoData['quantidade'],
+                'preco_total' => $inventario->preco * $produtoData['quantidade'],
+            ]);
+        }
+    
+        // Atualiza o preço total da venda após adicionar todos os produtos
+        $venda->preco_total = $precoTotal;
+        $venda->save();
+    
+        // Buscar a taxa de comissão do profissional
+        $profissional = Profissional::find($request->profissional_id);
+    
+        if (!$profissional) {
+            return response()->json(['error' => 'Profissional não encontrado'], 404);
+        }
+    
+        // Calcular o valor da comissão
+        $valorComissao = ($profissional->taxa_comissao / 100) * $precoTotal;
+    
+        // Criar automaticamente a transação após a venda
+        $transacao = Transacoes::create([
+            'data_transacao' => now(),
+            'metodo_pagamento' => $request->metodo_pagamento,
+            'valor_pago' => $precoTotal,
+            'venda_id' => $venda->id,
+            'filial_id' => $request->filial_id,
+        ]);
+    
+        // Criar a comissão
+        $comissao = Comissao::create([
+            'profissional_id' => $profissional->id,
+            'taxa_comissao' => $profissional->taxa_comissao,
+            'valor_comissao' => $valorComissao,
+            'venda_id' => $venda->id,
+        ]);
+    
+        $cliente = Cliente::find($request->cliente_id);
+        $cliente->adicionarPontos($precoTotal);
+    
+        return response()->json([
+            'venda' => $venda,
+            'transacao' => $transacao,
+            'comissao' => $comissao,
+        ], 201);
+    }
     /**
      * Registra uma nova venda no sistema.
      */
-    public function store(Request $request)
+    public function store0(Request $request)
     {
         // Valida os dados da requisição
         $request->validate([
