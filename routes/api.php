@@ -45,7 +45,9 @@ Route::get('/status', function () {
 })->middleware('auth:sanctum');
 Route::get('/comissoes/profissional', [ComissaoController::class, 'buscarComissoesPorEmail']);
 Route::get('/profissional/email/{email}', [ProfissionalController::class, 'getByEmail']);
-
+Route::get('/vendas/total-mes-atual', [VendasController::class, 'totalVendasMesAtual']);
+Route::get('/vendas/total-por-mes', [VendasController::class, 'totalVendasPorMes']);
+Route::get('/vendas/total-dia', [VendasController::class, 'totalVendasDiaAtual']);
 Route::get('/report', [ReportController::class, 'generateReport']);
 
 Route::get('/reportSales', [ReportController::class, 'generateReportSales']);

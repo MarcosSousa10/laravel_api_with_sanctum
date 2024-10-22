@@ -19,40 +19,32 @@ class ComissaoController extends Controller
     }
     public function buscarComissoesPorEmail(Request $request)
     {
-        // Verifica se o email foi passado na requisição
         $email = $request->query('email');
         
         if (!$email) {
             return ApiResponse::error('Email do profissional é necessário', 400);
         }
     
-        // Busca o profissional pelo email
         $profissional = Profissional::where('email', $email)->first();
     
-        // Verifica se o profissional foi encontrado
         if (!$profissional) {
             return ApiResponse::error('Profissional não encontrado', 404);
         }
     
-        // Atribui a image_url, caso a imagem esteja disponível
         if ($profissional->imagem) {
             $profissional->image_url = asset('images/' . $profissional->imagem);
         } else {
             $profissional->image_url = null;
         }
     
-        // Busca as comissões do profissional encontrado
         $comissoes = Comissao::where('profissional_id', $profissional->id)->get();
     
-        // Verifica se foram encontradas comissões
         if ($comissoes->isEmpty()) {
             return ApiResponse::error('Nenhuma comissão encontrada para esse profissional', 404);
         }
     
-        // Calcula o valor total das comissões
         $valorTotalComissoes = $comissoes->sum('valor_comissao');
     
-        // Retorna a imagem e o valor total das comissões
         return ApiResponse::success([
             'image_url' => $profissional->image_url,
             'valor_total_comissoes' => $valorTotalComissoes

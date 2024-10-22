@@ -78,7 +78,36 @@ class VendasController extends Controller
             'transacao' => $transacao,
         ], 201);
     }
+    public function totalVendasDiaAtual()
+{
+    $total = Venda::whereDate('data_venda', now())->sum('preco_total');
 
+    return response()->json([
+        'total_vendas_dia_atual' => $total,
+    ]);
+}
+
+    public function totalVendasMesAtual()
+    {
+        $total = Venda::whereYear('data_venda', now()->year)
+                      ->whereMonth('data_venda', now()->month)
+                      ->sum('preco_total');
+    
+        return response()->json([
+            'total_vendas_mes_atual' => $total,
+        ]);
+    }
+    
+    public function totalVendasPorMes()
+    {
+        $vendasPorMes = Venda::selectRaw('SUM(preco_total) as total_vendas, MONTH(data_venda) as mes, YEAR(data_venda) as ano')
+            ->groupBy('mes', 'ano')
+            ->orderBy('ano', 'asc')
+            ->orderBy('mes', 'asc')
+            ->get();
+    
+        return response()->json($vendasPorMes);
+    }
     public function store1(Request $request)
     {
         // Valida os dados da requisição
