@@ -44,6 +44,7 @@ Route::get('/status', function () {
     return ApiResponse::success('API is running');
 })->middleware('auth:sanctum');
 Route::get('/comissoes/profissional', [ComissaoController::class, 'buscarComissoesPorEmail']);
+Route::get('/profissional/email/{email}', [ProfissionalController::class, 'getByEmail']);
 
 Route::get('/report', [ReportController::class, 'generateReport']);
 
@@ -87,7 +88,7 @@ Route::get('/agendamentos/agendados', [AgendamentoController::class, 'filtrarAge
 Route::apiResource('clientes', ClienteController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('filiais', FilialController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 //CheckIfClient::class
-Route::middleware(['auth:sanctum', 'can:profissional'])->group(function () {
+Route::middleware(['auth:sanctum', 'can:Profissionais'])->group(function () {
     Route::apiResource('profissionais', ProfissionalController::class);
 });
 Route::prefix('cartoes-presente')->group(function () {
@@ -107,7 +108,7 @@ Route::put('vendas/{id}', [VendasController::class, 'update']);
 Route::apiResource('servicos', ServicoController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 //Route::apiResource('agendamentos', AgendamentoController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::middleware(['auth:sanctum', LogAuditoria::class])->group(function () {
-    Route::get('agendamentos', [AgendamentoController::class, 'index'])->name('agendamentos.index')->middleware('can:profissional');
+    Route::get('agendamentos', [AgendamentoController::class, 'index'])->name('agendamentos.index')->middleware('can:Profissionais');
     Route::post('agendamentos', [AgendamentoController::class, 'store'])->name('agendamentos.store');
     Route::get('agendamentos/{id}', [AgendamentoController::class, 'show'])->name('agendamentos.show');
     Route::put('agendamentos/{id}', [AgendamentoController::class, 'update'])->name('agendamentos.update');

@@ -29,7 +29,7 @@ class FornecedorController extends Controller
             'telefone' => 'nullable|string|max:20',
             'endereco' => 'nullable|string|max:255',
             'notas' => 'nullable|string',
-        ]);
+        ]); 
 
         $fornecedor = Fornecedor::create($request->all());
 

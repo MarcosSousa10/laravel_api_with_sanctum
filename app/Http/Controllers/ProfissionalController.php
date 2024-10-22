@@ -29,7 +29,18 @@ class ProfissionalController extends Controller
     }
 
 
-
+    public function getByEmail($email)
+    {
+        $profissional = Profissional::where('email', $email)->first();
+    
+        if ($profissional) {
+            $profissional->image_url = $profissional->imagem ? asset('images/' . $profissional->imagem) : null;
+            return ApiResponse::success($profissional);
+        }
+    
+        return ApiResponse::error('Profissional not found', 404);
+    }
+    
     /**
      * Store a newly created resource in storage.
      */
