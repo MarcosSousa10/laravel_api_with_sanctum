@@ -25,6 +25,7 @@ use App\Http\Controllers\DesempenhoDosFuncionariosController;
 use App\Http\Controllers\EmailSettingsController;
 use App\Http\Controllers\FornecedorController;
 use App\Http\Controllers\InventarioController;
+use App\Http\Controllers\ResgateFidelidadeController;
 use App\Http\Controllers\LogDeAuditoriaController;
 use App\Http\Controllers\PreferenciasDosClientesController;
 use App\Http\Controllers\ProdutoController;
@@ -52,7 +53,9 @@ Route::get('/agendamentos/profissional', [AgendamentoController::class, 'filtrar
 Route::get('/reportSales', [ReportController::class, 'generateReportSales']);
 Route::get('/reportSalesItens/{id}', [ReportController::class, 'generateReportSalesItens']);
 Route::get('/reportTransacao', [ReportController::class, 'generateReport1']);
-
+Route::get('/resgates/email', [ResgateFidelidadeController::class, 'resgatesPorEmail']);
+Route::get('/resgates/cliente/{cliente_id}', [ResgateFidelidadeController::class, 'resgatesPorClienteId']);
+Route::get('/resgates', [ResgateFidelidadeController::class, 'todasRecompensasResgatadas']);
 //Route::apiResource('cliente', ClientController::class)->middleware('auth:sanctum');
 Route::get('password/reset', [ResetPasswordController::class, 'showResetForm'])->name('password.request');
 Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
@@ -103,6 +106,9 @@ Route::prefix('cartoes-presente')->group(function () {
     Route::post('/{id}/resgatar', [CartaoPresenteController::class, 'resgatar']); // Resgatar cartão
     Route::get('/saldo/{codigo}', [CartaoPresenteController::class, 'verificarSaldo']); // Verificar saldo
 });
+Route::post('/clientes/{cliente_id}/recompensas/{recompensa_id}/resgatar', [ProgramaFidelidadeController::class, 'resgatarRecompensa'])->middleware(['auth:sanctum', LogAuditoria::class]);
+//Route::apiResource('agendamentos', AgendamentoController::class)->middleware(['auth:sanctum', LogAuditoria::cla
+
 Route::get('vendas', [VendasController::class, 'index']); 
 Route::post('vendas', [VendasController::class, 'store']); 
 Route::get('vendas/{id}', [VendasController::class, 'show']);
