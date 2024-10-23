@@ -230,4 +230,24 @@ class AgendamentoController extends Controller
 
         return ApiResponse::success($agendamentos);
     }
+    public function filtrarPorEmailProfissional(Request $request)
+{
+    // Valide o e-mail fornecido
+    $request->validate([
+        'email' => 'required|email',
+    ]);
+
+    $email = $request->input('email');
+
+    // Busque os agendamentos com status 'AGENDADO' e o e-mail do profissional
+    $agendamentos = Agendamento::with(['cliente', 'filial', 'profissional', 'servico'])
+        ->whereHas('profissional', function ($query) use ($email) {
+            $query->where('email', $email);
+        })
+        ->where('status', 'AGENDADO')
+        ->get();
+
+    return ApiResponse::success($agendamentos);
+}
+
 }

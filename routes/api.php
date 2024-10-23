@@ -10,7 +10,6 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ServicoController;
 use App\Services\ApiResponse;
 use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\AgendamentoController;
 use App\Http\Controllers\AgendaDeContatoController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -49,7 +48,7 @@ Route::get('/vendas/total-mes-atual', [VendasController::class, 'totalVendasMesA
 Route::get('/vendas/total-por-mes', [VendasController::class, 'totalVendasPorMes']);
 Route::get('/vendas/total-dia', [VendasController::class, 'totalVendasDiaAtual']);
 Route::get('/report', [ReportController::class, 'generateReport']);
-
+Route::get('/agendamentos/profissional', [AgendamentoController::class, 'filtrarPorEmailProfissional']);
 Route::get('/reportSales', [ReportController::class, 'generateReportSales']);
 Route::get('/reportSalesItens/{id}', [ReportController::class, 'generateReportSalesItens']);
 Route::get('/reportTransacao', [ReportController::class, 'generateReport1']);
@@ -90,9 +89,11 @@ Route::get('/agendamentos/agendados', [AgendamentoController::class, 'filtrarAge
 Route::apiResource('clientes', ClienteController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('filiais', FilialController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 //CheckIfClient::class
-Route::middleware(['auth:sanctum', 'can:Profissionais'])->group(function () {
-    Route::apiResource('profissionais', ProfissionalController::class);
-});
+//Route::middleware(['auth:sanctum', 'can:Profissionais'])->group(function () {
+ //   Route::apiResource('profissionais', ProfissionalController::class);
+//});
+Route::apiResource('profissionais', ProfissionalController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
+
 Route::prefix('cartoes-presente')->group(function () {
     Route::get('/', [CartaoPresenteController::class, 'index']);  // Listar cartões presente
     Route::post('/', [CartaoPresenteController::class, 'store']); // Criar novo cartão presente
@@ -110,7 +111,9 @@ Route::put('vendas/{id}', [VendasController::class, 'update']);
 Route::apiResource('servicos', ServicoController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 //Route::apiResource('agendamentos', AgendamentoController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::middleware(['auth:sanctum', LogAuditoria::class])->group(function () {
-    Route::get('agendamentos', [AgendamentoController::class, 'index'])->name('agendamentos.index')->middleware('can:Profissionais');
+   // Route::get('agendamentos', [AgendamentoController::class, 'index'])->name('agendamentos.index')->middleware('can:Profissionais');
+   Route::get('agendamentos', [AgendamentoController::class, 'index'])->name('agendamentos.index');
+
     Route::post('agendamentos', [AgendamentoController::class, 'store'])->name('agendamentos.store');
     Route::get('agendamentos/{id}', [AgendamentoController::class, 'show'])->name('agendamentos.show');
     Route::put('agendamentos/{id}', [AgendamentoController::class, 'update'])->name('agendamentos.update');
