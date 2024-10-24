@@ -10,7 +10,45 @@ use Illuminate\Support\Facades\DB;
 
 class ProgramaFidelidadeController extends Controller
 {
-    public function resgatarRecompensa(Request $request, $cliente_id, $recompensa_id)
+    public function resgatarRecompensa(Request $request, $email, $recompensa_id)
+{
+    // Encontre o cliente pelo email
+    $cliente = Cliente::where('email', $email)->firstOrFail();
+
+    // Encontre a recompensa pelo ID e valide a disponibilidade
+    $recompensa = ProgramaFidelidade::where('id', $recompensa_id)
+        ->whereDate('disponibilidade_inicio', '<=', now())
+        ->whereDate('disponibilidade_fim', '>=', now())
+        ->firstOrFail();
+
+    // Verifique se o cliente tem pontos suficientes
+    if ($cliente->pontos < $recompensa->pontos_necessarios) {
+        return response()->json([
+            'message' => 'Pontos insuficientes para resgatar esta recompensa.'
+        ], 400);
+    }
+
+    // Resgate a recompensa (debitando os pontos e salvando o resgate)
+    DB::transaction(function () use ($cliente, $recompensa) {
+        // Debita os pontos do cliente
+        $cliente->pontos -= $recompensa->pontos_necessarios;
+        $cliente->save();
+
+        // Registra o resgate na tabela de resgates
+        ResgateFidelidade::create([
+            'cliente_id' => $cliente->id,
+            'recompensa_id' => $recompensa->id,
+            'pontos_utilizados' => $recompensa->pontos_necessarios,
+        ]);
+    });
+
+    return response()->json([
+        'message' => 'Recompensa resgatada com sucesso!',
+        'recompensa' => $recompensa
+    ], 200);
+}
+
+    public function resgatarRecompensa1(Request $request, $cliente_id, $recompensa_id)
 {
     // Encontre o cliente pelo ID
     $cliente = Cliente::findOrFail($cliente_id);

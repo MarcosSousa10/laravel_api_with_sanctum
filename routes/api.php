@@ -85,7 +85,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::post('register', [AuthController::class, 'createUser'])->middleware(LogAuditoria::class);
 Route::post('/send-email', [EmailController::class, 'sendEmail'])->middleware(['auth:sanctum', 'ability:clients:detail']);
 Route::get('/new_user_confirmation/{token}', [AuthController::class, 'new_user_confirmation']);
-Route::post('/enviar-email', [EmailController::class, 'enviarEmail'])->middleware('auth:sanctum', CheckIfProfessional::class, LogAuditoria::class);
+Route::post('/enviar-email', [EmailController::class, 'enviarEmail'])->middleware('auth:sanctum', LogAuditoria::class);
 Route::get('/clientes/email', [ClienteController::class, 'getByEmail'])->middleware('auth:sanctum', LogAuditoria::class);
 Route::get('/agendamentos/por-email', [AgendamentoController::class, 'filtrarPorEmail'])->middleware('auth:sanctum', LogAuditoria::class);
 Route::get('/agendamentos/agendados', [AgendamentoController::class, 'filtrarAgendados'])->middleware('auth:sanctum', LogAuditoria::class);
@@ -106,7 +106,7 @@ Route::prefix('cartoes-presente')->group(function () {
     Route::post('/{id}/resgatar', [CartaoPresenteController::class, 'resgatar']); // Resgatar cartão
     Route::get('/saldo/{codigo}', [CartaoPresenteController::class, 'verificarSaldo']); // Verificar saldo
 });
-Route::post('/clientes/{cliente_id}/recompensas/{recompensa_id}/resgatar', [ProgramaFidelidadeController::class, 'resgatarRecompensa'])->middleware(['auth:sanctum', LogAuditoria::class]);
+Route::post('/clientes/{email}/recompensas/{recompensa_id}/resgatar', [ProgramaFidelidadeController::class, 'resgatarRecompensa'])->middleware(['auth:sanctum', LogAuditoria::class]);
 //Route::apiResource('agendamentos', AgendamentoController::class)->middleware(['auth:sanctum', LogAuditoria::cla
 
 Route::get('vendas', [VendasController::class, 'index']); 
@@ -129,14 +129,15 @@ Route::apiResource('agendas-de-contatos', AgendaDeContatoController::class)->mid
 Route::apiResource('avaliacoes-de-servicos', AvaliacaoDeServicoController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('campanhas-de-marketing', CampanhaDeMarketingController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 //Route::apiResource('cartoes-presente', CartaoPresenteController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
-Route::apiResource('comissoes', ComissaoController::class)->middleware(['auth:sanctum', CheckIfProfessional::class, LogAuditoria::class]);
+Route::apiResource('comissoes', ComissaoController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('comunicacao-clientes', ComunicacaoClienteController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('configuracoes-do-sistema', ConfiguracaoDoSistemaController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
-Route::apiResource('contas-a-pagar', ContaAPagarController::class)->middleware(['auth:sanctum', CheckIfProfessional::class, LogAuditoria::class]);
+Route::apiResource('contas-a-pagar', ContaAPagarController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
+// Route::apiResource('contas-a-pagar', ContaAPagarController::class)->middleware(['auth:sanctum', CheckIfProfessional::class, LogAuditoria::class]);
 Route::apiResource('desempenho-dos-funcionarios', DesempenhoDosFuncionariosController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
-Route::apiResource('fornecedores', FornecedorController::class)->middleware(['auth:sanctum', CheckIfProfessional::class, LogAuditoria::class]);
+Route::apiResource('fornecedores', FornecedorController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('inventario', InventarioController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
-Route::apiResource('logs-de-auditoria', LogDeAuditoriaController::class)->middleware(['auth:sanctum', CheckIfProfessional::class, LogAuditoria::class]);
+Route::apiResource('logs-de-auditoria', LogDeAuditoriaController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('preferencias-dos-clientes', PreferenciasDosClientesController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('programas-fidelidade', ProgramaFidelidadeController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
 Route::apiResource('promocoes-ativas', PromocoesAtivasController::class)->middleware(['auth:sanctum', LogAuditoria::class]);
