@@ -20,47 +20,63 @@ use App\Models\Profissional;
 class AuthController extends Controller
 {
     public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+{
+    // Validação dos dados de entrada
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ], [
+        'email.required' => 'O campo e-mail é obrigatório.',
+        'email.email' => 'O e-mail informado não é válido.',
+        'password.required' => 'O campo senha é obrigatório.',
+    ]);
 
-        $credentials = $request->only('email', 'password');
+    // Captura das credenciais
+    $credentials = $request->only('email', 'password');
 
-        if (!Auth::attempt($credentials)) {
-            return ApiResponse::unauthorized('Credenciais inválidas.');
-        }
+    // Tentativa de autenticação
+    if (!Auth::attempt($credentials)) {
+        return ApiResponse::unauthorized('Credenciais inválidas. Verifique seu e-mail e senha.');
+    }
 
-        $user = Auth::user();
+    $user = Auth::user();
 
-        if (!$user->email_verified_at) {
-            return ApiResponse::error('Por favor, verifique seu e-mail antes de fazer login.');
-        }
+    // Verifica se o e-mail do usuário foi verificado
+    if (!$user->email_verified_at) {
+        return ApiResponse::error('Por favor, verifique seu e-mail antes de fazer login.');
+    }
 
-        $sessionId = session()->getId();
-        $ipAddress = $request->ip();
-        $userAgent = $request->header('User-Agent');
+    // Captura informações da sessão
+    $sessionId = session()->getId();
+    $ipAddress = $request->ip();
+    $userAgent = $request->header('User-Agent');
 
+    // Criação da sessão
+    try {
         $session = new Session();
         $session->id = $sessionId;
         $session->user_id = $user->id;
         $session->ip_address = $ipAddress;
         $session->user_agent = $userAgent;
         $session->last_activity = time();
-
         $session->payload = json_encode([]);
         $session->save();
-
-        $token = $user->createToken($user->name, ['*'], now()->addDay())->plainTextToken;
-
-        return ApiResponse::success([
-            'user' => $user->name,
-            'userId' => $user->id,
-            'email' => $user->email,
-            'token' => $token,
-        ]);
+    } catch (\Exception $e) {
+        return ApiResponse::error('Erro ao criar a sessão: ' . $e->getMessage());
     }
+
+    // Geração do token de autenticação
+    $token = $user->createToken($user->name, ['*'], now()->addDay())->plainTextToken;
+
+    // Resposta de sucesso
+    return ApiResponse::success([
+        'user' => $user->name,
+        'userId' => $user->id,
+        'email' => $user->email,
+        'token' => $token,
+    ]);
+}
+
 
     public function logout(Request $request)
     {
@@ -112,6 +128,7 @@ class AuthController extends Controller
         // Criação do cliente ou profissional baseado no tipo
         if ($request->tipo === 'cliente') {
             $cliente = Cliente::create([
+                'user_id' => $user->id, 
                 'data_nascimento' => $request->data_nascimento,
                 'email' => $request->email,
                 'endereco' => $request->endereco,

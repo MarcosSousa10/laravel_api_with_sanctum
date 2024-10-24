@@ -26,7 +26,7 @@ class ApiResponse
     {
         return response()->json([
             'status_code' => 401,
-            'message' => 'Unauthorized access',
+            'message' => 'Acesso não autorizado',
         ], 401);
     }
 }

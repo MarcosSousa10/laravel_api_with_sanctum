@@ -12,6 +12,7 @@ class Cliente extends Model
     protected $table = 'clientes';
 
     protected $fillable = [
+        'user_id', 
         'data_nascimento',
         'email',
         'endereco',
@@ -38,5 +39,11 @@ class Cliente extends Model
     {
         // Exemplo: a cada 1 real gasto, o cliente ganha 1 ponto.
         return floor($valor);
+    }
+
+    // Relacionamento com o usuário
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
